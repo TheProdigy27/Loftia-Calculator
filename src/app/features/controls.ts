@@ -52,17 +52,10 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
   imports: [AssetPipe, PlotsControl],
   host: { class: 'controls' },
   template: `
-    <div class="panel">
+    <div class="panel ctlbar">
       @for (row of levelRows(); track row.key) {
-        <div class="prow">
-          <div>
-            <div class="plabel"><img [src]="row.icon | asset" alt="" />Ton niveau de {{ row.label }}</div>
-            <div class="perks">
-              @for (p of row.perks; track p.icon) {
-                <span class="perk" [class.off]="!p.on" [title]="p.title"><img [src]="p.icon | asset" alt="" />{{ p.label }}</span>
-              }
-            </div>
-          </div>
+        <div class="ctl" [title]="'Ton niveau de ' + row.label">
+          <span class="clabel"><img [src]="row.icon | asset" alt="" />{{ row.label }}</span>
           <div class="stepper">
             <button type="button" class="step" [disabled]="row.lvl <= 1" (click)="store.stepLevel(row.key, -1)" [attr.aria-label]="'Baisser le niveau de ' + row.label">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12" /></svg>
@@ -72,36 +65,38 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12M12 6v12" /></svg>
             </button>
           </div>
+          <span class="perks">
+            @for (p of row.perks; track p.icon) {
+              <img class="perk" [class.off]="!p.on" [src]="p.icon | asset" [alt]="p.label" [title]="p.title" />
+            }
+          </span>
         </div>
       }
-    </div>
 
-    <div class="panel">
-      <div class="prow">
-        <div><div class="plabel">Quel prix utiliser ?</div><div class="psub">Pour le coût des ingrédients</div></div>
+      <div class="ctl" title="Prix utilisé pour le coût des ingrédients">
+        <span class="clabel">Prix</span>
         <div class="seg">
           <button type="button" [attr.aria-pressed]="s().mode === 'cash'" (click)="store.patch({ mode: 'cash' })">Ce que ça coûte</button>
           <button type="button" [attr.aria-pressed]="s().mode === 'regular'" (click)="store.patch({ mode: 'regular' })">Prix de revente</button>
         </div>
       </div>
-      <div class="prow">
-        <div><div class="plabel">Parcelles</div><div class="psub">Pour calculer le temps de pousse</div></div>
+      <div class="ctl" title="Pour calculer le temps de pousse">
+        <span class="clabel">Parcelles</span>
         <app-plots />
       </div>
-      <div class="prow">
-        <div>
-          <div class="plabel"><img src="assets/cooking-station.webp" alt="" />Station de cuisine</div>
-          <div class="psub">Recettes jusqu'à ce niveau</div>
-        </div>
+      <div class="ctl" title="Station de cuisine : recettes jusqu'à ce niveau">
+        <span class="clabel"><img src="assets/cooking-station.webp" alt="" />Station</span>
         <div class="seg">
           @for (lv of [1, 2, 3]; track lv) {
             <button type="button" [attr.aria-pressed]="s().station === lv" (click)="store.patch({ station: lv })">Lv {{ lv }}</button>
           }
         </div>
       </div>
+
+      <button type="button" class="helpbtn" [attr.aria-expanded]="s().showTip" (click)="store.patch({ showTip: !s().showTip })" title="Comment c'est calculé ?" aria-label="Afficher l'aide">?</button>
     </div>
 
-    <div class="tipcol">
+    @if (s().showTip) {
       <div class="tip">
         <span class="tip-tag">Tip</span>
         @if (s().tab === 'cultures') {
@@ -127,7 +122,7 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
           }
         }
       </div>
-    </div>
+    }
   `,
 })
 export class Controls {

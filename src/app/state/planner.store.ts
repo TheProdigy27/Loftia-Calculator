@@ -34,6 +34,8 @@ export interface PlannerState {
   ings: string[];
   cropSort: CropSortKey;
   cropDir: 1 | -1;
+  /** Encadré d'aide sous la barre de réglages */
+  showTip: boolean;
 }
 
 export interface RecipeRow extends ComputedRecipe {
@@ -61,6 +63,7 @@ export const DEFAULT_STATE: PlannerState = {
   ings: [],
   cropSort: 'dph',
   cropDir: -1,
+  showTip: false,
 };
 
 export const SORTS: Record<BaseSort, (a: ComputedRecipe, b: ComputedRecipe) => number> = {
