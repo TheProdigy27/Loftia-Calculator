@@ -3,6 +3,7 @@ import { Controls } from './features/controls';
 import { CropsView } from './features/crops-view';
 import { PlanPanel } from './features/plan-panel';
 import { RecipesView } from './features/recipes-view';
+import { TimerAlerts, TimerChip } from './features/timer';
 import { UpdateBanner, UpdateButton } from './features/updater';
 import { PlannerStore, Tab } from './state/planner.store';
 import { UpdaterStore } from './state/updater.store';
@@ -14,7 +15,22 @@ const WIDE_QUERY = '(min-width: 1180px)';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, ExternalLink, Controls, RecipesView, CropsView, PlanPanel, UpdateButton, UpdateBanner],
+  imports: [
+    AssetPipe,
+    TimePipe,
+    N0Pipe,
+    Dew,
+    Icon,
+    ExternalLink,
+    Controls,
+    RecipesView,
+    CropsView,
+    PlanPanel,
+    UpdateButton,
+    UpdateBanner,
+    TimerChip,
+    TimerAlerts,
+  ],
   templateUrl: './app.html',
 })
 export class App {
@@ -70,6 +86,17 @@ export class App {
   protected setTab(tab: Tab): void {
     this.store.patch({ tab });
     window.scrollTo(0, 0);
+  }
+
+  /** Pastille du minuteur : ouvre « Mon plan » si besoin et fait défiler jusqu'au minuteur */
+  protected openTimer(): void {
+    const opening = !this.wide() && !this.drawerOpen();
+    if (opening) this.drawerOpen.set(true);
+    // Le tiroir glisse en 0,22 s : on attend qu'il soit en place
+    setTimeout(
+      () => document.getElementById('timer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      opening ? 240 : 0,
+    );
   }
 
   protected onSearch(v: string): void {

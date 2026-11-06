@@ -15,6 +15,7 @@ Le cadrage complet est dans [Loftia Planner — Plan d'application.md](Loftia%20
 | Données embarquées | fait : `src/data/loftia-data.json` (instantané du 6 novembre 2026) |
 | Installeur Windows | fait : `npm run dist` produit un `-setup.exe` NSIS de 6,4 Mo (bootstrapper WebView2 inclus) |
 | Mise à jour automatique | fait : vérifie les releases GitHub au démarrage puis toutes les 6 h, bouton ↻ dans la barre du haut, installation et redémarrage en un clic |
+| Minuteur du plan | fait : « J'ai planté » dans Mon plan lance un compte à rebours ; à chaque arrosage, replantation (parcelles limitées) et récolte, petit son, notification dans l'appli et clignotement dans la barre des tâches ; survit à une fermeture de l'appli |
 
 Raccourcis : `Ctrl+F` ou `/` pour chercher, `Échap` pour effacer, `+` et `−` sur une carte sélectionnée (Tab).
 
@@ -38,7 +39,7 @@ src/app/state/       état de l'appli en signals, sauvegarde locale, mises à jo
 src/app/features/    écrans : réglages, recettes, cultures, plan
 src/app/ui/          pipes, icônes, contrôles partagés
 src/data/            data.json embarqué (schemaVersion 1)
-src-tauri/           côté Rust : fenêtre, liens externes ; V1 : synchro Codex, minuteurs, notifications
+src-tauri/           côté Rust : fenêtre, liens externes ; V1 : synchro Codex, notifications Windows
 reference/prototype/ prototype d'origine, sert de référence aux tests
 scripts/             conversion des données, génération des résultats de référence, import des icônes
 ```

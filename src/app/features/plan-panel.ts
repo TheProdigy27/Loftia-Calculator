@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { PLAN_GROUPS, planText, plotsLabel } from '../core/plan-text';
 import { PlannerStore } from '../state/planner.store';
+import { TimerStore } from '../state/timer.store';
 import { AssetPipe, Dew, Icon, N0Pipe, PlotsControl, QtyControl, TimePipe } from '../ui/shared';
+import { TimerCard } from './timer';
 
 /** « Mon plan de cuisine » : panneau fixe à droite sur grand écran, tiroir sinon */
 @Component({
   selector: 'app-plan-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, QtyControl, PlotsControl],
+  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, QtyControl, PlotsControl, TimerCard],
   template: `
     <div class="drawer-head">
       <span class="sticker sm"><img src="assets/cooking-station.webp" alt="" /></span>
@@ -18,6 +20,10 @@ import { AssetPipe, Dew, Icon, N0Pipe, PlotsControl, QtyControl, TimePipe } from
     </div>
     <div class="drawer-body">
       @let P = plan();
+      <!-- Minuteur lancé : en tête, même si le plan a changé ou a été vidé depuis -->
+      @if (timer.session()) {
+        <app-timer-card />
+      }
       @if (!P.count) {
         <div class="panel empty" style="flex-direction: column; text-align: center">
           <img src="assets/T_UI_NPC_Quest_Icons_Pebble.webp" alt="" />
@@ -60,6 +66,10 @@ import { AssetPipe, Dew, Icon, N0Pipe, PlotsControl, QtyControl, TimePipe } from
             <app-plots />
           </div>
         </section>
+
+        @if (!timer.session()) {
+          <app-timer-card />
+        }
 
         <section class="psec">
           <h3><img src="assets/T_UI_Attribute_Icons_Cook.webp" alt="" />Recettes<small>{{ P.entries.length }} recette{{ P.entries.length > 1 ? 's' : '' }}</small></h3>
@@ -117,6 +127,7 @@ import { AssetPipe, Dew, Icon, N0Pipe, PlotsControl, QtyControl, TimePipe } from
 })
 export class PlanPanel {
   protected readonly store = inject(PlannerStore);
+  protected readonly timer = inject(TimerStore);
   protected readonly s = this.store.state;
   protected readonly plan = this.store.planResult;
 

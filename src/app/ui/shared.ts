@@ -42,7 +42,7 @@ export class PluralPipe implements PipeTransform {
   }
 }
 
-export type IconName = 'minus' | 'plus' | 'x' | 'clock' | 'search' | 'copy' | 'caret' | 'refresh';
+export type IconName = 'minus' | 'plus' | 'x' | 'clock' | 'search' | 'copy' | 'caret' | 'refresh' | 'bell' | 'bell-off';
 
 @Component({
   selector: 'app-icon',
@@ -70,6 +70,12 @@ export type IconName = 'minus' | 'plus' | 'x' | 'clock' | 'search' | 'copy' | 'c
       }
       @case ('refresh') {
         <svg [class]="cls()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 5v4h4" /><path d="M4 13a8 8 0 0 0 14.6 4.5M20 19v-4h-4" /></svg>
+      }
+      @case ('bell') {
+        <svg [class]="cls()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z" /><path d="M10 20.5a2 2 0 0 0 4 0" /></svg>
+      }
+      @case ('bell-off') {
+        <svg [class]="cls()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z" /><path d="M10 20.5a2 2 0 0 0 4 0" /><path d="M4 4l16 16" /></svg>
       }
       @case ('caret') {
         <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>

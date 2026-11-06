@@ -12,6 +12,7 @@
       </a>
     }
   </nav>
+  <app-timer-chip (open)="openTimer()" />
   <app-update-button />
   @if (!wide()) {
     <button type="button" class="planbtn" aria-haspopup="dialog" (click)="drawerOpen.set(true)">
@@ -21,6 +22,7 @@
   }
 </header>
 <app-update-banner />
+<app-timer-alerts />
 
 <div class="layout" [class.with-plan]="wide()">
   <main class="wrap">

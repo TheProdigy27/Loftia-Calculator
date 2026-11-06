@@ -376,3 +376,63 @@ app-plan-panel{display:flex; flex-direction:column; flex:1; min-height:0}
 .updbar .prog.indet span{animation:upd-pulse 1.2s ease-in-out infinite alternate}
 @keyframes upd-pulse{from{opacity:.35}to{opacity:1}}
 @media (max-width:760px){ .updbtn .ver{display:none} .updbtn{padding:6px} .updbar{top:auto; bottom:76px; right:12px} }
+
+/* ---------- Minuteur (carte de Mon plan, pastille du haut, notifications) ---------- */
+.psec h3 svg.h3ico{width:22px; height:22px; color:var(--teal)}
+.tcard{padding:12px 14px; display:flex; flex-direction:column; gap:10px}
+.tcard.on{border-color:var(--teal); box-shadow:0 0 0 3px var(--panel-mint), var(--shadow)}
+.tcard .pnote b{color:var(--ink)}
+.tsteps{display:flex; flex-wrap:wrap; gap:5px}
+.tstep{display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding:2px 10px 2px 3px; font-size:12.5px; font-weight:700; color:var(--text); background:var(--panel-2); border:1px solid var(--border-soft); white-space:nowrap}
+.tstep img{width:22px; height:22px}
+.tstep b{color:var(--ink)}
+.tstep.water{background:#e5f3f8; border-color:#c3e1ec}
+.tstep.harvest{background:#eef5dc; border-color:#d6e4b2}
+.tstep.plant{background:var(--mint-body); border-color:var(--mint-line)}
+.tfirst{display:flex; align-items:center; flex-wrap:wrap; gap:6px 8px}
+.tfirst .tl{font-size:12.5px; font-weight:800; color:var(--muted)}
+.tgo{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 10px; border-top:1px dashed var(--border); padding-top:10px}
+.tnext{display:flex; align-items:center; gap:14px}
+.tnext .cd{font:600 34px/1 var(--font-display); color:var(--teal-deep); font-variant-numeric:tabular-nums; min-width:92px}
+.tnext .what{flex:1; min-width:0; display:flex; flex-direction:column; gap:5px}
+.tnext small{font-size:12px; font-weight:800; color:var(--muted)}
+.tprog{height:8px; border-radius:999px; background:var(--panel-2); overflow:hidden}
+.tprog span{display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--teal-bright),var(--teal)); transition:width 1s linear}
+.tlist{list-style:none; margin:0; padding:10px 0 0; display:flex; flex-direction:column; gap:6px; border-top:1px dashed var(--border)}
+.tlist li{display:flex; align-items:flex-start; gap:10px}
+.tlist .tm{min-width:42px; padding-top:3px; font-size:12.5px; font-weight:900; color:var(--muted); font-variant-numeric:tabular-nums}
+.tlist .more{font-size:12.5px; font-weight:700; color:var(--muted); padding-left:52px}
+.tdone{display:flex; align-items:center; gap:12px}
+.tdone img{width:48px; height:48px}
+.tdone b{display:block; font:600 18px var(--font-display); color:var(--teal-deep)}
+.tacts{display:flex; gap:8px; flex-wrap:wrap}
+.tacts .btn{padding:7px 12px}
+.tacts .btn[aria-pressed="false"]{color:var(--muted)}
+
+.tchip{display:flex; align-items:center; gap:6px; border:1px solid var(--teal); background:var(--mint-body); color:var(--teal-deep); border-radius:999px; padding:5px 12px 5px 8px; font-weight:800; font-size:13px; white-space:nowrap}
+.tchip svg{width:17px; height:17px}
+.tchip .cd{font-weight:900; font-variant-numeric:tabular-nums}
+.tchip .lbl{color:var(--muted)}
+.tchip:hover{background:var(--panel-mint)}
+.tchip.done{background:#eef5dc; border-color:#a3bf62; color:#5a7426}
+.tchip.ring{background:var(--here-wash); border-color:var(--here); color:var(--here-ink); animation:t-pulse 1.2s ease-in-out infinite}
+.tchip.ring .lbl{color:inherit}
+@keyframes t-pulse{50%{box-shadow:0 0 0 4px rgba(212,111,36,.2)}}
+
+.talerts{position:fixed; top:75px; left:50%; transform:translateX(-50%); z-index:60; width:min(470px, calc(100vw - 24px)); display:flex; flex-direction:column; gap:10px; pointer-events:none}
+.talert{pointer-events:auto; display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--panel); border:2px solid #7bbcd3; border-radius:var(--radius-lg);
+  box-shadow:0 10px 30px rgba(29,60,50,.22), var(--shadow-raised); animation:t-pop .35s cubic-bezier(.2,1.4,.4,1)}
+.talert.harvest{border-color:var(--leaf-green)}
+.talert .ico{width:54px; height:54px; flex:none; animation:t-ring .9s ease-in-out 2}
+.talert .body{flex:1; min-width:0; display:flex; flex-direction:column; gap:5px}
+.talert .body > b{font:600 17px/1.2 var(--font-display); color:var(--ink)}
+.talert .body small{font-size:12px; font-weight:800; color:var(--here-ink)}
+.talert .tstep{white-space:normal}
+.talert .btn{flex:none; align-self:center}
+@keyframes t-pop{from{opacity:0; transform:translateY(-12px) scale(.96)}}
+@keyframes t-ring{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){ .talert, .talert .ico, .tchip.ring{animation:none} }
+/* Sous 1180 px le bouton « Mon plan » rejoint la barre du haut : la pastille se contente du compte à rebours */
+@media (max-width:1179px){ .tchip .lbl{display:none} .tchip{padding-right:10px} .search{min-width:0} .search kbd{white-space:nowrap} }
+@media (max-width:900px) and (min-width:761px){ .search kbd{display:none} }
+@media (max-width:760px){ .talerts{top:12px} .talert{flex-wrap:wrap} .talert .btn{margin-left:auto} }
