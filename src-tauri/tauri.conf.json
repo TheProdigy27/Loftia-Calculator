@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Loftia Planner",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "identifier": "io.github.theprodigy27.loftiaplanner",
   "build": {
     "frontendDist": "../dist/loftia-planner/browser",
