@@ -1,0 +1,73 @@
+<header class="topbar">
+  <span class="brand"><img src="assets/spotless-game-guy.webp" alt="" /><span>Loftia <b>Planner</b></span></span>
+  <label class="search">
+    <app-icon name="search" />
+    <input #search type="search" placeholder="Plat ou ingrédient…" autocomplete="off" [value]="store.q()" (input)="onSearch($any($event.target).value)" />
+    <kbd>Ctrl F</kbd>
+  </label>
+  <nav class="tabs">
+    @for (t of tabs; track t.id) {
+      <a href="#" role="button" [attr.aria-current]="s().tab === t.id ? 'page' : null" (click)="$event.preventDefault(); setTab(t.id)">
+        <img [src]="t.icon | asset" alt="" />{{ t.label }}
+      </a>
+    }
+  </nav>
+  @if (!wide()) {
+    <button type="button" class="planbtn" aria-haspopup="dialog" (click)="drawerOpen.set(true)">
+      <img src="assets/cooking-station.webp" alt="" /><span class="lbl">Mon plan</span>
+      <span class="badge" [class.zero]="!plan().count">{{ plan().count }}</span>
+    </button>
+  }
+</header>
+
+<div class="layout" [class.with-plan]="wide()">
+  <main class="wrap">
+    @let p = page();
+    <div class="crumbs"><a appExternal href="https://loftiacodex.com/economy/crops/">Economy</a> › <span>{{ p.crumb }}</span></div>
+    <div class="title-row">
+      <span class="sticker"><img [src]="p.icon | asset" alt="" /></span>
+      <h1>{{ p.title }}</h1>
+    </div>
+    <p class="subtitle">{{ p.subtitle }}</p>
+
+    <app-controls />
+
+    @if (s().tab === 'recettes') {
+      <app-recipes-view />
+    } @else {
+      <app-crops-view />
+    }
+
+    <footer>
+      Données et visuels : <a appExternal href="https://loftiacodex.com/economy/cooking/">Loftia Codex</a> (pages Crops, Cooking et fiches
+      objets), relevés le {{ extracted }}. Les prix sont en Dew.
+    </footer>
+  </main>
+
+  @if (wide()) {
+    <aside class="side-plan" aria-label="Mon plan de cuisine"><app-plan-panel /></aside>
+  }
+</div>
+
+@if (!wide()) {
+  <div class="overlay" [class.open]="drawerOpen()" (click)="drawerOpen.set(false)"></div>
+  <aside class="drawer" [class.open]="drawerOpen()" role="dialog" aria-modal="true" aria-label="Mon plan de cuisine">
+    <app-plan-panel [closable]="true" (closed)="drawerOpen.set(false)" />
+  </aside>
+  @if (plan().count && !drawerOpen()) {
+    <button type="button" class="planbar" (click)="drawerOpen.set(true)">
+      <span class="stack">
+        @for (e of plan().entries.slice(0, 4); track e.slug) {
+          <img [src]="e.slug | asset" alt="" />
+        }
+      </span>
+      <span class="info">
+        {{ plan().count }} plat{{ plan().count > 1 ? 's' : '' }} · <app-dew />+{{ plan().profit | n0 }}
+        @if (plan().time) {
+          · <app-icon name="clock" cls="clock" />{{ plan().time | time }}
+        }
+      </span>
+      <span class="go">Voir le plan ›</span>
+    </button>
+  }
+}

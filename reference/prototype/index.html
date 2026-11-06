@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loftia — Cuisine &amp; Cultures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#3f6f60; --accent-2:#98d4a8; --bg:#ece5cc; --border:#dcd3b4; --border-soft:#ece5ca;
+  --font-body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-display:"Fredoka","Nunito",ui-rounded,system-ui,sans-serif;
+  --here:#d46f24; --here-ink:#9a4b10; --here-wash:#fff1e3;
+  --ink:#1d3c32; --leaf:#508372; --leaf-green:#a3bf62; --mint-body:#e2f2eb; --mint-line:#d3e9df;
+  --muted:#4d695b; --panel:#fffdf6; --panel-2:#f4eedb; --panel-mint:#d4efe4; --panel-mint-strong:#aac4a4;
+  --quest:#6f4fb8; --quest-wash:#efe9fa;
+  --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+  --shadow:0 2px 0 rgba(35,70,58,.07); --shadow-pop:0 4px 0 rgba(35,70,58,.08),0 0 0 1px rgba(35,70,58,.04); --shadow-raised:0 3px 0 rgba(35,70,58,.10);
+  --teal:#237a68; --teal-bright:#4fd0b8; --teal-deep:#1b5f51; --text:#324337; --text-strong:#23463a;
+  --dots:radial-gradient(circle, rgba(80,131,114,.22) 1.2px, transparent 1.6px);
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0; font-family:var(--font-body); color:var(--text); font-size:15px; line-height:1.45;
+  background:radial-gradient(120% 700px at 50% 0%, rgba(255,255,255,.4), rgba(0,0,0,0) 70%), url("assets/bg-texture.webp") var(--bg);
+  background-size:auto, 512px 512px; min-height:100vh;
+}
+img{user-select:none; -webkit-user-drag:none}
+button{font:inherit; color:inherit; cursor:pointer}
+a{color:var(--teal)}
+.dew{width:15px; height:15px; vertical-align:-2px; margin-right:3px}
+.clock{width:13px; height:13px; vertical-align:-2px; margin-right:3px}
+
+/* ---------- Top bar ---------- */
+.topbar{position:sticky; top:0; z-index:30; height:63px; display:flex; align-items:center; gap:20px; padding:0 26px;
+  background:rgba(255,253,246,.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--border)}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none; font-family:var(--font-display); font-weight:600; font-size:20px; color:var(--ink); white-space:nowrap}
+.brand img{width:26px; height:26px}
+.brand b{color:var(--teal); font-weight:600}
+.search{flex:1; max-width:300px; display:flex; align-items:center; gap:8px; height:38px; padding:0 8px 0 13px; border-radius:999px;
+  background:var(--panel-2); border:1px solid var(--border); color:var(--muted)}
+.search:focus-within{border-color:var(--teal); background:var(--panel); box-shadow:0 0 0 3px rgba(35,122,104,.12)}
+.search svg{width:17px; height:17px; flex:none}
+.search input{flex:1; min-width:0; border:0; background:none; outline:none; font:inherit; font-size:14px; color:var(--ink)}
+.search input::placeholder{color:#7d8f84}
+.search kbd{font:700 11px var(--font-body); color:var(--muted); background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:1px 7px}
+.tabs{margin-left:auto; display:flex; gap:6px}
+.tabs a{display:flex; align-items:center; gap:7px; text-decoration:none; color:var(--ink); font-weight:700; font-size:15px; padding:6px 13px 6px 9px; border-radius:999px; border:1px solid transparent}
+.tabs a img{width:24px; height:24px}
+.tabs a:hover{background:var(--mint-body)}
+.tabs a[aria-current="page"]{background:var(--panel-mint); border-color:var(--teal); color:var(--teal-deep)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1240px; margin:0 auto; padding:22px 26px 60px}
+body.has-plan .wrap{padding-bottom:110px}
+.crumbs{font-size:13px; color:var(--muted); font-weight:600}
+.crumbs a{color:var(--muted); text-decoration:none}
+.crumbs a:hover{color:var(--teal)}
+.title-row{display:flex; align-items:center; gap:12px; margin:14px 0 18px}
+.sticker{width:46px; height:46px; border-radius:13px; background:var(--panel-mint); display:grid; place-items:center; box-shadow:var(--shadow)}
+.sticker img{width:38px; height:38px}
+h1{font-family:var(--font-display); font-weight:600; font-size:34px; color:var(--ink); margin:0; letter-spacing:-.3px}
+.subtitle{font-size:14px; color:var(--muted); margin:-10px 0 18px 58px}
+h2{font-family:var(--font-display); font-weight:600; font-size:21px; color:var(--ink); margin:0}
+
+.panel{background:var(--panel); border:1px solid var(--border-soft); border-radius:var(--radius-lg); box-shadow:var(--shadow)}
+
+/* ---------- Controls ---------- */
+.controls{display:grid; grid-template-columns:1.05fr 1fr .9fr; gap:16px; align-items:start; margin-bottom:22px}
+.prow{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px}
+.prow + .prow{border-top:1px solid var(--border-soft)}
+.plabel{font-weight:800; color:var(--ink); font-size:14.5px; display:flex; align-items:center; gap:8px}
+.plabel img{width:26px; height:26px}
+.psub{font-size:12.5px; color:var(--muted); margin-top:2px}
+.perks{display:flex; gap:5px; margin-top:6px; flex-wrap:wrap}
+.perk{display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:800; color:var(--teal-deep);
+  background:var(--mint-body); border:1px solid var(--mint-line); border-radius:999px; padding:1px 8px 1px 2px}
+.perk img{width:20px; height:20px}
+.perk.off{filter:grayscale(1); opacity:.55; background:var(--panel-2); border-color:var(--border); color:var(--muted)}
+.stepper{display:flex; align-items:center; gap:6px; flex:none}
+.step{width:30px; height:30px; display:grid; place-items:center; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--panel); color:var(--muted)}
+.step:hover:not(:disabled){border-color:var(--teal); color:var(--teal)}
+.step:disabled{opacity:.4; cursor:default}
+.step svg{width:15px; height:15px}
+.lv{min-width:52px; text-align:center; font-weight:900; font-size:13px; color:var(--teal-deep); background:var(--panel-mint); border-radius:8px; padding:4px 8px; border:1px solid transparent}
+.seg{display:inline-flex; gap:5px; flex-wrap:wrap; justify-content:flex-end}
+.seg button{border:1px solid var(--border); background:var(--panel); border-radius:10px; padding:6px 11px; font-weight:700; font-size:13px; color:var(--text)}
+.seg button:hover{border-color:var(--teal)}
+.seg button[aria-pressed="true"]{background:var(--mint-body); border-color:var(--teal); color:var(--teal-deep); font-weight:800; box-shadow:inset 0 0 0 1px var(--teal)}
+
+.tip{position:relative; margin-top:10px; border-radius:var(--radius-lg); padding:18px 16px 14px; background:linear-gradient(135deg,#effcf5,var(--mint-body)); border:1px solid var(--mint-line); box-shadow:var(--shadow); font-size:13.5px; color:var(--text-strong)}
+.tip-tag{position:absolute; top:-11px; left:14px; background:var(--panel); border:1px solid var(--mint-line); border-radius:999px; font-weight:800; font-size:12px; padding:1px 11px; color:var(--teal-deep)}
+.tip p{margin:0 0 7px}
+.tip .ex{border-top:1px solid var(--mint-line); padding-top:8px; margin-top:8px; font-size:12.5px; color:var(--muted)}
+.tip .ex b{color:var(--text-strong)}
+
+/* ---------- Sort & filters ---------- */
+.sortbar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+.sortbtn{display:flex; align-items:center; gap:10px; padding:9px 16px 9px 10px; border-radius:16px; border:1px solid var(--border); background:var(--panel); box-shadow:var(--shadow); text-align:left}
+.sortbtn .ico{width:38px; height:38px; border-radius:11px; background:var(--panel-2); display:grid; place-items:center; flex:none; color:var(--teal)}
+.sortbtn .ico img{width:28px; height:28px}
+.sortbtn .ico svg{width:24px; height:24px}
+.sortbtn .ico.duo{position:relative}
+.sortbtn .ico.duo img{width:24px; height:24px; position:absolute; left:4px; top:4px}
+.sortbtn .ico.duo svg{width:17px; height:17px; position:absolute; right:3px; bottom:3px; background:var(--panel); border-radius:50%}
+.sortbtn b{display:block; font-family:var(--font-display); font-weight:600; font-size:16px; color:var(--ink); line-height:1.15}
+.sortbtn small{display:block; font-size:12px; color:var(--muted); font-weight:600}
+.sortbtn:hover{border-color:var(--teal)}
+.sortbtn[aria-pressed="true"]{background:var(--panel-mint); border-color:var(--teal); box-shadow:var(--shadow-raised), inset 0 0 0 1px var(--teal)}
+.sortbtn[aria-pressed="true"] .ico{background:var(--panel)}
+
+.filterbar{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+.fl{font-size:12.5px; font-weight:800; color:var(--muted); margin-right:2px}
+.chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--panel); border-radius:999px; padding:4px 11px 4px 6px; font-size:12.5px; font-weight:700}
+.chip img{width:20px; height:20px}
+.chip .box{width:16px; height:16px; border-radius:5px; border:1.5px solid var(--border); background:var(--panel); display:grid; place-items:center}
+.chip[aria-pressed="true"]{border-color:var(--teal); background:var(--mint-body); color:var(--teal-deep)}
+.chip[aria-pressed="true"] .box{background:var(--teal); border-color:var(--teal)}
+.chip[aria-pressed="true"] .box::after{content:""; width:8px; height:4px; border:2px solid #fff; border-top:0; border-right:0; transform:rotate(-45deg) translate(1px,-1px)}
+.spacer{flex:1}
+.count{font-size:13px; color:var(--muted); font-weight:700}
+
+details.ingpick{margin-bottom:16px}
+details.ingpick > summary{list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px; padding:11px 16px; font-weight:800; color:var(--ink)}
+details.ingpick > summary::-webkit-details-marker{display:none}
+details.ingpick > summary .caret{width:16px; height:16px; transition:transform .15s; color:var(--muted)}
+details.ingpick[open] > summary .caret{transform:rotate(90deg)}
+.sel-mini{display:flex; gap:4px}
+.sel-mini img{width:24px; height:24px; background:var(--mint-body); border-radius:7px}
+.linkbtn{border:0; background:none; color:var(--teal); font-weight:800; font-size:13px; padding:0; text-decoration:underline; text-underline-offset:2px}
+.ing-groups{padding:2px 16px 14px; display:grid; gap:12px}
+.ing-group h3{margin:0 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:800}
+.ing-grid{display:flex; flex-wrap:wrap; gap:6px}
+.ingbtn{width:74px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 3px 5px; border-radius:12px; border:1px solid var(--border-soft); background:var(--panel)}
+.ingbtn img{width:40px; height:40px}
+.ingbtn span{font-size:10.5px; font-weight:700; line-height:1.1; text-align:center; color:var(--text)}
+.ingbtn:hover{border-color:var(--teal)}
+.ingbtn[aria-pressed="true"]{background:var(--mint-body); border-color:var(--teal); box-shadow:inset 0 0 0 1px var(--teal)}
+
+/* ---------- Highlights ---------- */
+.highlights{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px}
+.hl{display:flex; align-items:center; gap:12px; padding:12px 14px; cursor:pointer; text-align:left; width:100%}
+.hl:hover{border-color:var(--teal)}
+.hl .art{width:62px; height:62px; border-radius:14px; background:var(--dots), var(--mint-body); background-size:9px 9px, auto; display:grid; place-items:center; flex:none}
+.hl .art img{width:54px; height:54px}
+.hl .k{font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:800; color:var(--leaf)}
+.hl .n{font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--ink); line-height:1.15}
+.hl .v{font-weight:800; color:var(--teal-deep); font-size:14px; margin-top:2px}
+
+/* ---------- Recipe cards ---------- */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px}
+.rcard{position:relative; padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px; transition:transform .12s, box-shadow .12s}
+.rcard:hover{transform:translateY(-2px); box-shadow:var(--shadow-pop)}
+.rhead{display:flex; gap:12px; align-items:center}
+.dish-art{width:70px; height:70px; border-radius:16px; background:var(--dots), linear-gradient(135deg,#effcf5,var(--mint-body)); background-size:9px 9px, auto; border:1px solid var(--mint-line); display:grid; place-items:center; flex:none}
+.dish-art img{width:62px; height:62px}
+.rname{font-family:var(--font-display); font-weight:600; font-size:18.5px; color:var(--ink); line-height:1.15; text-decoration:none; display:block; padding-right:36px}
+.rname:hover{color:var(--teal)}
+.tags{display:flex; gap:5px; flex-wrap:wrap; margin-top:5px}
+.tag{display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:800; border-radius:999px; padding:1px 8px; background:var(--panel-2); color:var(--muted); border:1px solid var(--border)}
+.tag img{width:15px; height:15px}
+.tag.kun{background:var(--quest-wash); color:var(--quest); border-color:#ddd2f5}
+.tag.best{background:#eef5dc; color:#5a7426; border-color:#d6e4b2}
+.tag.warn{background:var(--here-wash); color:var(--here-ink); border-color:#f3d6b9}
+.rank{position:absolute; top:12px; right:12px; min-width:30px; height:26px; padding:0 7px; border-radius:9px; display:grid; place-items:center; font:700 13px var(--font-display); color:var(--muted); background:var(--panel-2); border:1px solid var(--border)}
+.rank.top{background:var(--panel-mint); color:var(--teal-deep); border-color:var(--teal)}
+
+.ings{display:flex; gap:8px; flex-wrap:wrap; padding:10px; border-radius:14px; background:var(--panel-2); border:1px solid var(--border-soft)}
+.ing{width:66px; display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; color:inherit}
+.ing-art{position:relative; width:52px; height:52px; border-radius:13px; background:var(--panel); border:1px solid var(--border); display:grid; place-items:center}
+.ing-art img{width:44px; height:44px}
+.ing .qty{position:absolute; right:-5px; bottom:-5px; font-size:11px; font-weight:900; color:var(--ink); background:var(--panel); border:1px solid var(--border); border-radius:7px; padding:0 4px; line-height:16px}
+.ing .nm{font-size:10.5px; font-weight:700; line-height:1.1; text-align:center; color:var(--text); max-width:66px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ing .tm{font-size:10.5px; font-weight:800; border-radius:999px; padding:0 6px; line-height:16px; white-space:nowrap}
+.tm.crop{background:var(--mint-body); color:var(--teal-deep)}
+.tm.tree{background:#eef5dc; color:#5a7426}
+.tm.gather{background:#f1ead2; color:#7a6a3c}
+.tm.shop{background:var(--quest-wash); color:var(--quest)}
+.tm.craft{background:var(--here-wash); color:var(--here-ink)}
+.ing.crit .ing-art{border-color:var(--here); box-shadow:0 0 0 2px var(--here-wash), 0 0 0 3px var(--here)}
+.ing.crit .tm{background:var(--here); color:#fff}
+.ing.hit .ing-art{background:var(--panel-mint)}
+
+.metrics{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px}
+.m{border-radius:11px; padding:6px 2px 5px; text-align:center; background:var(--panel); border:1px solid var(--border-soft)}
+.m .l{font-size:10.5px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+.m .v{font-weight:900; font-size:14.5px; color:var(--ink); white-space:nowrap}
+.m.hot{background:var(--panel-mint); border-color:var(--teal)}
+.m.hot .v{color:var(--teal-deep)}
+.m .v.neg{color:#b5452b}
+.m .v.na{color:#9aa79f; font-weight:700; font-size:13px}
+
+/* ---------- Tables ---------- */
+.tablewrap{overflow-x:auto; border-radius:var(--radius-lg)}
+table{width:100%; border-collapse:separate; border-spacing:0; font-size:14px}
+thead th{background:var(--panel-2); color:var(--ink); font-weight:800; font-size:13px; text-align:left; padding:11px 12px; white-space:nowrap; border-bottom:1px solid var(--border)}
+thead th.num, td.num{text-align:right}
+thead th[data-k]{cursor:pointer; user-select:none}
+thead th[data-k]:hover{color:var(--teal)}
+thead th .arr{color:var(--teal); font-size:11px; margin-left:3px}
+tbody td{padding:8px 12px; border-top:1px solid var(--border-soft); vertical-align:middle; background:var(--panel)}
+tbody tr:first-child td{border-top:0}
+tbody tr:hover td{background:#fbf8ec}
+td.strong{font-weight:900; color:var(--ink)}
+td.hot{background:#f3fbf7 !important; font-weight:900; color:var(--teal-deep)}
+.cell{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink); text-decoration:none; white-space:nowrap}
+.cell .ci{width:40px; height:40px; border-radius:11px; background:var(--mint-body); display:grid; place-items:center; flex:none}
+.cell .ci img{width:34px; height:34px}
+.mini-ings{display:flex; gap:4px}
+.mini-ing{position:relative; width:34px; height:34px; border-radius:9px; background:var(--mint-body); display:grid; place-items:center}
+.mini-ing img{width:28px; height:28px}
+.mini-ing i{position:absolute; right:-4px; bottom:-4px; font-style:normal; font-size:10px; font-weight:900; background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:0 3px; line-height:13px}
+.mini-ing.crit{box-shadow:0 0 0 2px var(--here)}
+.dish-stack{display:flex; align-items:center}
+.dish-stack button{border:0; padding:0; background:none; display:flex; align-items:center}
+.dish-stack img{width:30px; height:30px; margin-left:-7px; background:var(--panel); border-radius:9px; border:1px solid var(--border-soft)}
+.dish-stack img:first-child{margin-left:0}
+.dish-stack span{font-weight:800; font-size:12.5px; color:var(--teal); margin-left:6px; white-space:nowrap}
+
+.section-head{display:flex; align-items:baseline; gap:12px; margin:26px 0 12px}
+.section-head p{margin:0; color:var(--muted); font-size:13.5px}
+.extras{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px}
+.xcard{display:flex; align-items:center; gap:11px; padding:10px 12px; text-align:left; width:100%}
+.xcard:hover{border-color:var(--teal)}
+.xcard img{width:46px; height:46px; flex:none}
+.xcard b{display:block; color:var(--ink); font-size:14.5px}
+.xcard small{display:block; color:var(--muted); font-size:12px; font-weight:600}
+
+/* ---------- Empty ---------- */
+.empty{display:flex; align-items:center; gap:14px; padding:22px; justify-content:center}
+.empty img{width:64px; height:64px}
+.say{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:10px 14px; max-width:420px}
+.say b{display:block; font-family:var(--font-display); font-weight:600; color:var(--teal-deep)}
+.say p{margin:2px 0 0; font-size:14px}
+
+/* ---------- Plan ---------- */
+.planbtn{display:flex; align-items:center; gap:7px; border:1px solid var(--border); background:var(--panel); border-radius:999px; padding:5px 8px 5px 7px; font-weight:800; font-size:15px; color:var(--ink)}
+.planbtn img{width:24px; height:24px}
+.planbtn:hover{border-color:var(--teal)}
+.badge{min-width:22px; height:22px; border-radius:999px; background:var(--here); color:#fff; font-size:12px; font-weight:900; display:grid; place-items:center; padding:0 6px}
+.badge.zero{background:var(--panel-2); color:var(--muted); border:1px solid var(--border)}
+.qtyrow{display:flex; align-items:center; gap:10px; border-top:1px dashed var(--border); padding-top:10px; margin-top:-2px}
+.qtyrow .lbl{font-size:12.5px; font-weight:800; color:var(--muted)}
+.qtyrow .tot{margin-left:auto; font-size:12.5px; color:var(--muted); font-weight:700; text-align:right; display:flex; align-items:center; gap:4px}
+.qtyrow .tot img{width:15px; height:15px}
+.addbtn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--teal); background:var(--panel); color:var(--teal-deep); font-weight:800; font-size:13px; border-radius:10px; padding:6px 12px 6px 9px}
+.addbtn:hover{background:var(--mint-body)}
+.addbtn svg{width:14px; height:14px}
+.addbtn.sm{padding:4px 8px; font-size:12px}
+.qty-ctl{display:inline-flex; align-items:center; border:1px solid var(--teal); border-radius:10px; overflow:hidden; background:var(--panel); flex:none}
+.qty-ctl button{width:30px; height:30px; border:0; background:var(--mint-body); color:var(--teal-deep); display:grid; place-items:center}
+.qty-ctl button svg{width:13px; height:13px}
+.qty-ctl button:hover{background:var(--panel-mint)}
+.qty-ctl input{width:46px; height:30px; border:0; border-left:1px solid var(--mint-line); border-right:1px solid var(--mint-line); text-align:center; font:900 14px var(--font-body); color:var(--ink); background:var(--panel); -moz-appearance:textfield; appearance:textfield}
+.qty-ctl input::-webkit-outer-spin-button, .qty-ctl input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+.qty-ctl input:focus{outline:2px solid var(--teal); outline-offset:-2px}
+.qty-ctl.sm button{width:25px; height:27px}
+.qty-ctl.sm input{width:38px; height:27px; font-size:13px}
+.rcard.inplan{border-color:var(--teal); box-shadow:0 0 0 3px var(--panel-mint), var(--shadow-raised)}
+.totcap{font-size:11px; font-weight:900; color:var(--teal-deep); text-transform:uppercase; letter-spacing:.06em; margin:-4px 0 -6px; display:flex; align-items:center; gap:6px}
+.totcap::after{content:""; flex:1; height:1px; background:var(--mint-line)}
+.iconbtn{border:0; background:none; color:var(--muted); padding:5px; border-radius:8px; display:grid; place-items:center}
+.iconbtn svg{width:15px; height:15px}
+.iconbtn:hover{color:#b5452b; background:var(--panel-2)}
+tr.inplan td{background:#f3fbf7}
+.plots-ctl{display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+
+.overlay{position:fixed; inset:0; background:rgba(29,60,50,.28); z-index:40; opacity:0; pointer-events:none; transition:opacity .2s}
+.overlay.open{opacity:1; pointer-events:auto}
+.drawer{position:fixed; top:0; right:0; bottom:0; width:min(480px,100vw); z-index:50; display:flex; flex-direction:column;
+  background:url("assets/bg-texture.webp") var(--bg); background-size:512px 512px; border-left:1px solid var(--border); box-shadow:-10px 0 30px rgba(29,60,50,.16);
+  transform:translateX(105%); transition:transform .22s ease, visibility 0s .22s; visibility:hidden}
+.drawer.open{transform:none; visibility:visible; transition:transform .22s ease}
+.drawer-head{display:flex; align-items:center; gap:10px; padding:13px 16px; border-bottom:1px solid var(--border); background:rgba(255,253,246,.88)}
+.drawer-head h2{flex:1}
+.drawer-body{flex:1; overflow-y:auto; padding:16px 16px 28px; display:flex; flex-direction:column; gap:16px}
+.sticker.sm{width:38px; height:38px; border-radius:11px}
+.sticker.sm img{width:30px; height:30px}
+.xbtn{width:34px; height:34px; border-radius:10px; border:1px solid var(--border); background:var(--panel); display:grid; place-items:center; color:var(--muted)}
+.xbtn:hover{border-color:var(--teal); color:var(--teal)}
+.xbtn svg{width:16px; height:16px}
+.psec h3{margin:0 0 8px; font-family:var(--font-display); font-weight:600; font-size:16px; color:var(--ink); display:flex; align-items:center; gap:8px}
+.psec h3 img{width:24px; height:24px}
+.psec h3 small{font-family:var(--font-body); font-size:12.5px; color:var(--muted); font-weight:800; margin-left:auto}
+.ptot{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px}
+.ptot .m{padding:8px 3px 7px}
+.ptot .m .v{font-size:16px}
+.plines{padding:4px 14px; margin-top:8px}
+.pline{display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:7px 0; font-size:13.5px}
+.pline + .pline{border-top:1px solid var(--border-soft)}
+.pline b{color:var(--ink); white-space:nowrap}
+.pline.sub{color:var(--muted); font-size:12.5px}
+.pline.big{font-size:15px}
+.pline.big b{color:var(--teal-deep); font-size:16px}
+.prow2{display:flex; align-items:center; gap:10px; padding:8px 12px}
+.prow2 + .prow2{border-top:1px solid var(--border-soft)}
+.prow2 img.di{width:42px; height:42px; background:var(--dots), var(--mint-body); background-size:8px 8px, auto; border-radius:11px; padding:3px; flex:none}
+.prow2 img.di.ing{width:38px; height:38px; background:var(--panel-2)}
+.prow2 .nm{flex:1; min-width:0}
+.prow2 .nm b{display:block; color:var(--ink); font-size:14px; line-height:1.2}
+.prow2 .nm small{display:block; color:var(--muted); font-size:12px; font-weight:600; line-height:1.3}
+.prow2 .q{font-weight:900; color:var(--ink); font-size:15px; white-space:nowrap}
+.prow2 .c{font-weight:800; font-size:12.5px; color:var(--muted); white-space:nowrap; min-width:62px; text-align:right}
+.prow2 .c.free{color:#7aa36a}
+.pactions{display:flex; gap:8px; flex-wrap:wrap}
+.btn{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--border); background:var(--panel); border-radius:11px; padding:9px 15px; font-weight:800; font-size:13.5px; color:var(--text)}
+.btn svg{width:15px; height:15px}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--teal); border-color:var(--teal); color:#fff}
+.btn.primary:hover{background:var(--teal-deep)}
+.pnote{font-size:12.5px; color:var(--muted); margin:0}
+.planbar{position:fixed; left:50%; bottom:16px; transform:translateX(-50%); z-index:35; display:flex; align-items:center; gap:12px; border:1px solid var(--teal); background:var(--panel); border-radius:999px; padding:6px 7px 6px 10px; box-shadow:0 8px 24px rgba(29,60,50,.18), var(--shadow-raised); font-weight:800; color:var(--ink); max-width:calc(100vw - 20px)}
+.planbar .stack{display:flex}
+.planbar .stack img{width:32px; height:32px; margin-left:-9px; background:var(--mint-body); border-radius:50%; border:2px solid var(--panel)}
+.planbar .stack img:first-child{margin-left:0}
+.planbar .info{font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:4px}
+.planbar .go{background:var(--teal); color:#fff; border-radius:999px; padding:7px 15px; white-space:nowrap}
+.planbar:hover .go{background:var(--teal-deep)}
+
+footer{margin-top:36px; text-align:center; font-size:12.5px; color:var(--muted)}
+footer a{color:var(--muted)}
+[hidden]{display:none !important}
+
+@media (max-width:1060px){ .controls{grid-template-columns:1fr 1fr} .controls .tipcol{grid-column:1 / -1} }
+@media (max-width:760px){
+  .topbar{position:static; height:auto; flex-wrap:wrap; padding:10px 14px; gap:8px 10px}
+  .brand{font-size:18px}
+  .search{order:3; max-width:none; flex-basis:100%}
+  .tabs a{padding:5px 10px 5px 7px; font-size:14px}
+  .wrap{padding:16px 14px 50px}
+  .controls{grid-template-columns:1fr}
+  .highlights{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  h1{font-size:28px}
+  .subtitle{margin-left:0; margin-top:-8px}
+  .prow{flex-wrap:wrap}
+  .sortbtn{flex:1 1 calc(50% - 10px)}
+  .sortbtn small{display:none}
+  .planbtn .lbl{display:none}
+  .planbar .stack{display:none}
+  .ptot{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#recettes"><img src="assets/spotless-game-guy.webp" alt=""><span>Loftia <b>Codex</b></span></a>
+  <label class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+    <input id="q" type="search" placeholder="Plat ou ingrédient…" autocomplete="off">
+    <kbd>/</kbd>
+  </label>
+  <nav class="tabs">
+    <a href="#recettes" data-tab="recettes"><img src="assets/T_UI_Attribute_Icons_Cook.webp" alt="">Recettes</a>
+    <a href="#cultures" data-tab="cultures"><img src="assets/T_UI_Attribute_Icons_Farm.webp" alt="">Cultures</a>
+  </nav>
+  <button class="planbtn" id="open-plan" data-open-plan aria-haspopup="dialog"><img src="assets/cooking-station.webp" alt=""><span class="lbl">Mon plan</span><span class="badge zero" id="plan-badge">0</span></button>
+</header>
+
+<main class="wrap">
+  <div class="crumbs"><a href="https://loftiacodex.com/economy/crops/">Economy</a> › <span id="crumb">Cuisine &amp; cultures</span></div>
+  <div class="title-row">
+    <span class="sticker"><img id="title-icon" src="assets/T_UI_Attribute_Icons_Cook.webp" alt=""></span>
+    <h1 id="title">Planificateur de cuisine</h1>
+  </div>
+  <p class="subtitle" id="subtitle">Toutes les recettes avec le temps de pousse de leurs ingrédients : trouve les plus rentables, ou celles qui sont prêtes le plus vite.</p>
+
+  <section class="controls">
+    <div class="panel">
+      <div class="prow">
+        <div>
+          <div class="plabel"><img src="assets/T_UI_Attribute_Icons_Cook.webp" alt="">Ton niveau de Cuisine</div>
+          <div class="perks" id="perks-cook"></div>
+        </div>
+        <div class="stepper" data-skill="cookLvl">
+          <button class="step" data-d="-1" aria-label="Baisser le niveau de Cuisine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
+          <span class="lv" id="lv-cook">Lv 1</span>
+          <button class="step" data-d="1" aria-label="Monter le niveau de Cuisine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
+        </div>
+      </div>
+      <div class="prow">
+        <div>
+          <div class="plabel"><img src="assets/T_UI_Attribute_Icons_Farm.webp" alt="">Ton niveau de Farming</div>
+          <div class="perks" id="perks-farm"></div>
+        </div>
+        <div class="stepper" data-skill="farmLvl">
+          <button class="step" data-d="-1" aria-label="Baisser le niveau de Farming"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
+          <span class="lv" id="lv-farm">Lv 1</span>
+          <button class="step" data-d="1" aria-label="Monter le niveau de Farming"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="prow">
+        <div><div class="plabel">Quel prix utiliser ?</div><div class="psub">Pour le coût des ingrédients</div></div>
+        <div class="seg" data-key="mode">
+          <button data-v="cash">Ce que ça coûte</button>
+          <button data-v="regular">Prix de revente</button>
+        </div>
+      </div>
+      <div class="prow">
+        <div><div class="plabel">Parcelles</div><div class="psub">Pour calculer le temps de pousse</div></div>
+        <div class="plots-ctl" data-plots></div>
+      </div>
+      <div class="prow">
+        <div><div class="plabel"><img src="assets/cooking-station.webp" alt="">Station de cuisine</div><div class="psub">Recettes jusqu'à ce niveau</div></div>
+        <div class="seg" data-key="station">
+          <button data-v="1">Lv 1</button><button data-v="2">Lv 2</button><button data-v="3">Lv 3</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tipcol">
+      <div class="tip"><span class="tip-tag">Tip</span><div id="tip"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= RECETTES ================= -->
+  <section id="view-recettes">
+    <div class="sortbar" id="sortbar">
+      <button class="sortbtn" data-sort="profit"><span class="ico"><img src="assets/currency-dew.webp" alt=""></span><span><b>Les plus rentables</b><small>Profit par plat</small></span></button>
+      <button class="sortbtn" data-sort="time"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span><span><b>Les plus rapides</b><small>Pousse des ingrédients incluse</small></span></button>
+      <button class="sortbtn" data-sort="dph"><span class="ico duo"><img src="assets/currency-dew.webp" alt=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span><span><b>Meilleur Dew / h</b><small>Profit ÷ temps de pousse</small></span></button>
+      <button class="sortbtn" data-sort="dpe"><span class="ico"><img src="assets/energy-cost.webp" alt=""></span><span><b>Dew par énergie</b><small>Profit ÷ énergie dépensée</small></span></button>
+    </div>
+
+    <div class="filterbar" id="filterbar">
+      <span class="fl">Inclure :</span>
+      <button class="chip" data-inc="nocrop"><span class="box"></span>Sans culture</button>
+      <button class="chip" data-inc="gather"><span class="box"></span>Cueillette</button>
+      <button class="chip" data-inc="shop"><span class="box"></span><img src="assets/egg.webp" alt="">Boutique</button>
+      <button class="chip" data-inc="craft"><span class="box"></span><img src="assets/honey.webp" alt="">Miel</button>
+      <button class="chip" data-opt="treesReady" title="Si tes arbres sont déjà plantés, leurs fruits ne comptent pas dans le temps"><span class="box"></span><img src="assets/coconut.webp" alt="">Arbres déjà plantés</button>
+      <button class="chip" data-opt="paretoOnly" title="Recettes qu'aucune autre ne bat à la fois en profit et en temps"><span class="box"></span>Meilleurs compromis</button>
+      <button class="chip" data-opt="planOnly"><span class="box"></span><img src="assets/cooking-station.webp" alt="">Mon plan</button>
+      <span class="spacer"></span>
+      <span class="count" id="count"></span>
+      <div class="seg" data-key="view">
+        <button data-v="cards">Cartes</button><button data-v="table">Tableau</button>
+      </div>
+    </div>
+
+    <details class="panel ingpick" id="ingpick">
+      <summary>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        Filtrer par ingrédient
+        <span class="sel-mini" id="sel-mini"></span>
+        <span class="spacer"></span>
+        <button class="linkbtn" id="clear-ings" hidden>Tout retirer</button>
+      </summary>
+      <div class="ing-groups" id="ing-groups"></div>
+    </details>
+
+    <div class="highlights" id="highlights"></div>
+    <div id="results"></div>
+  </section>
+
+  <!-- ================= CULTURES ================= -->
+  <section id="view-cultures" hidden>
+    <div class="panel tablewrap"><table id="crops-table"></table></div>
+    <div class="section-head"><h2>Autres ingrédients</h2><p>Cueillette, boutique et ruche : clique pour voir les recettes qui les utilisent.</p></div>
+    <div class="extras" id="extras"></div>
+  </section>
+
+  <footer>Données et visuels : <a href="https://loftiacodex.com/economy/cooking/">Loftia Codex</a> (pages Crops, Cooking et fiches objets), relevés le 6 novembre 2026. Les prix sont en Dew.</footer>
+</main>
+
+<div class="overlay" id="overlay" data-close-plan></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Mon plan de cuisine">
+  <div class="drawer-head">
+    <span class="sticker sm"><img src="assets/cooking-station.webp" alt=""></span>
+    <h2>Mon plan de cuisine</h2>
+    <button class="xbtn" data-close-plan aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="drawer-body" id="plan-body"></div>
+</aside>
+<button class="planbar" id="planbar" data-open-plan hidden></button>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script>
+(function () {
+  "use strict";
+  var D = window.LOFTIA, C = window.LoftiaCalc;
+  var A = function (s) { return "assets/" + s + ".webp"; };
+  var CODEX = "https://loftiacodex.com/items/";
+  var DEW = '<img class="dew" src="assets/currency-dew.webp" alt="">';
+  var CLOCK = '<svg class="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>';
+  var STORE = "loftia-cuisine-cultures-v1";
+
+  var defaults = {
+    tab: "recettes", cookLvl: 1, farmLvl: 1, mode: "cash", plotsLimited: false, plots: 6, station: 3, plan: {}, planOnly: false,
+    inc: { nocrop: false, gather: true, shop: true, craft: true }, treesReady: false, paretoOnly: false,
+    sort: "profit", dir: -1, view: "cards", ings: [], q: "", cropSort: "dph", cropDir: -1
+  };
+  var state = JSON.parse(JSON.stringify(defaults));
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORE) || "null");
+    if (saved) { Object.keys(defaults).forEach(function (k) { if (k in saved) state[k] = saved[k]; }); state.q = ""; }
+    if (saved && saved.plant === "single" && !("plotsLimited" in saved)) { state.plotsLimited = true; state.plots = 1; }
+    if (!state.plan || typeof state.plan !== "object") state.plan = {};
+  } catch (e) {}
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+  /* ---------- helpers ---------- */
+  function $(s, el) { return (el || document).querySelector(s); }
+  function $$(s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); }
+  function fmtTime(m) {
+    if (!m) return "0m";
+    var h = Math.floor(m / 60), r = m % 60;
+    return h ? (h + "h" + (r ? " " + r + "m" : "")) : r + "m";
+  }
+  function n0(x) { return Math.round(x).toLocaleString("fr-FR"); }
+  function opt() { return { cookLvl: state.cookLvl, farmLvl: state.farmLvl, mode: state.mode, plots: state.plotsLimited ? state.plots : 0, treesReady: state.treesReady }; }
+  var ICON_MINUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 12h12"/></svg>';
+  var ICON_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg>';
+  var ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+  function qtyCtl(slug, n, sm) {
+    return '<span class="qty-ctl' + (sm ? " sm" : "") + '"><button data-qty-step="' + slug + '" data-d="-1" aria-label="Une de moins">' + ICON_MINUS + "</button>" +
+      '<input type="number" min="1" max="999" inputmode="numeric" value="' + n + '" data-qty-input="' + slug + '" aria-label="Nombre de plats">' +
+      '<button data-qty-step="' + slug + '" data-d="1" aria-label="Une de plus">' + ICON_PLUS + "</button></span>";
+  }
+  function plotsCtl() {
+    return '<span class="seg"><button data-plots-mode="unlimited" aria-pressed="' + !state.plotsLimited + '">Illimitées</button>' +
+      '<button data-plots-mode="limited" aria-pressed="' + state.plotsLimited + '">Limitées</button></span>' +
+      (state.plotsLimited ? '<span class="qty-ctl sm"><button data-plots-step="-1" aria-label="Une parcelle de moins">' + ICON_MINUS + "</button>" +
+        '<input type="number" min="1" max="99" inputmode="numeric" value="' + state.plots + '" data-plots-input aria-label="Nombre de parcelles">' +
+        '<button data-plots-step="1" aria-label="Une parcelle de plus">' + ICON_PLUS + "</button></span>" : "");
+  }
+  function planCount() { return Object.keys(state.plan).reduce(function (a, k) { return a + (state.plan[k] || 0); }, 0); }
+  var TYPE_LABEL = { crop: "Culture", tree: "Arbre", gather: "Cueillette", shop: "Boutique", craft: "Ruche" };
+
+  // Ingrédients utilisés dans les recettes + index inverse
+  var usedIn = {};
+  D.recipes.forEach(function (r) { r[6].forEach(function (p) { (usedIn[p[0]] = usedIn[p[0]] || []).push(r[0]); }); });
+  var recipeBySlug = {}; D.recipes.forEach(function (r) { recipeBySlug[r[0]] = r; });
+
+  /* ---------- controls ---------- */
+  var PERK_ICON = {
+    "cooking.refund": "T_UI_Perks_Cook_IngredientRefund", "cooking.double": "T_UI_Perks_Cook_DoubleDish",
+    "farming.double": "T_UI_Perks_Farm_DoubleHarvest", "farming.faster": "T_UI_Perks_Farm_FasterCrops", "farming.water": "T_UI_Perks_Farm_WetterCrops"
+  };
+  var PERK_DESC = {
+    "cooking.refund": "5 % de chance de récupérer le premier ingrédient (baisse le coût moyen)",
+    "cooking.double": "5 % de chance d'obtenir un plat en double (+5 % de valeur moyenne)",
+    "farming.double": "5 % de chance de double récolte (+5 % de valeur moyenne)",
+    "farming.faster": "Les cultures poussent 5 % plus vite",
+    "farming.water": "L'arrosage tient plus longtemps (+15 % puis +25 %)"
+  };
+  function renderPerks(skill, el, lvl) {
+    var tiers = D.perks[skill], html = "";
+    var fams = Object.keys(tiers).sort(function (a, b) { return tiers[a][0].level - tiers[b][0].level; });
+    fams.forEach(function (k) {
+      var key = skill + "." + k, list = tiers[k];
+      var on = list.filter(function (p) { return lvl >= p.level; });
+      var next = list.filter(function (p) { return lvl < p.level; })[0];
+      var base = list[0].name.replace(/ I+$/, "");
+      var label = on.length ? on[on.length - 1].name : base + " · Lv " + list[0].level;
+      var tip = base + " — " + PERK_DESC[key] + (on.length ? " · actif : " + on.map(function (p) { return p.name; }).join(", ") : "") + (next ? " · prochain palier au Lv " + next.level : "");
+      html += '<span class="perk' + (on.length ? "" : " off") + '" title="' + tip + '"><img src="' + A(PERK_ICON[key]) + '" alt="">' + label + "</span>";
+    });
+    el.innerHTML = html;
+  }
+
+  function renderControls() {
+    $("#lv-cook").textContent = "Lv " + state.cookLvl;
+    $("#lv-farm").textContent = "Lv " + state.farmLvl;
+    renderPerks("cooking", $("#perks-cook"), state.cookLvl);
+    renderPerks("farming", $("#perks-farm"), state.farmLvl);
+    $$(".stepper").forEach(function (st) {
+      var v = state[st.dataset.skill];
+      st.querySelector('[data-d="-1"]').disabled = v <= 1;
+      st.querySelector('[data-d="1"]').disabled = v >= 20;
+    });
+    $$("[data-plots]").forEach(function (el) { el.innerHTML = plotsCtl(); });
+    $$(".seg[data-key]").forEach(function (seg) {
+      var k = seg.dataset.key;
+      $$("button", seg).forEach(function (b) { b.setAttribute("aria-pressed", String(String(state[k]) === b.dataset.v)); });
+    });
+    $$("#sortbar .sortbtn").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.sort === String(state.sort).replace(/_$/, ""))); });
+    $$("#filterbar [data-inc]").forEach(function (b) { b.setAttribute("aria-pressed", String(!!state.inc[b.dataset.inc])); });
+    $$("#filterbar [data-opt]").forEach(function (b) { b.setAttribute("aria-pressed", String(!!state[b.dataset.opt])); });
+    $$(".tabs a").forEach(function (a) { if (a.dataset.tab === state.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    var rec = state.tab === "recettes";
+    $("#view-recettes").hidden = !rec;
+    $("#view-cultures").hidden = rec;
+    $("#title").textContent = rec ? "Planificateur de cuisine" : "Cultures";
+    $("#crumb").textContent = rec ? "Cuisine & cultures" : "Cultures";
+    $("#title-icon").src = rec ? A("T_UI_Attribute_Icons_Cook") : A("T_UI_Attribute_Icons_Farm");
+    $("#subtitle").textContent = rec
+      ? "Toutes les recettes avec le temps de pousse de leurs ingrédients : trouve les plus rentables, ou celles qui sont prêtes le plus vite."
+      : "Graines, temps de pousse et rentabilité de chaque culture, avec les recettes où elles servent.";
+  }
+
+  function renderTip(top) {
+    var t = "";
+    if (state.tab === "cultures") {
+      t = "<p><b>Dew / h</b> = (vente − prix de la graine) ÷ temps de pousse, comme sur le Codex. Ton niveau de Farming applique Rapid Growth (pousse plus courte), Fruitful Harvest (valeur moyenne) et Deep Hydration (arrosage plus long).</p>" +
+        "<p><b>Arrosage</b> = combien de temps un arrosage tient. Les arbres n'ont pas de prix de graine relevé sur le Codex.</p>" +
+        '<div class="ex">Clique sur les plats d\'une ligne pour voir les recettes qui utilisent cette culture.</div>';
+      $("#tip").innerHTML = t; return;
+    }
+    if (state.mode === "cash") {
+      t += "<p><b>Ce que ça coûte</b> : prix des graines + achats en boutique. La cueillette et les fruits d'arbres sont gratuits. Le profit, c'est ce que tu gagnes vraiment en partant de zéro.</p>";
+    } else {
+      t += "<p><b>Prix de revente</b> (comme sur le Codex) : tes cultures et ta cueillette comptent pour ce que tu pourrais les vendre, la boutique pour son prix. Le profit, c'est ce que la cuisine ajoute par rapport à vendre les ingrédients bruts.</p>";
+    }
+    t += !state.plotsLimited
+      ? "<p><b>Temps</b> = pousse de l'ingrédient le plus long (" + '<span style="color:var(--here-ink);font-weight:800">cerclé en orange</span>' + "), toutes les graines plantées en même temps.</p>"
+      : "<p><b>Temps</b> = toutes les graines réparties au mieux sur <b>" + state.plots + " parcelle" + (state.plots > 1 ? "s" : "") + "</b>. Les arbres ne prennent pas de parcelle. L'ingrédient le plus long est " + '<span style="color:var(--here-ink);font-weight:800">cerclé en orange</span>.</p>';
+    t += "<p>Ajoute des recettes à <b>ton plan</b> avec le bouton + : la carte passe en totaux et le plan additionne les ingrédients.</p>";
+    if (top) {
+      var parts = top.ings.map(function (i) { return i.name + " " + (i.q > 1 ? i.q + "×" : "") + i.unit; });
+      t += '<div class="ex"><b>' + top.name + "</b> : " + parts.join(" + ") + " = " + top.cost + " Dew" +
+        (state.cookLvl >= 2 ? " (Ingredient Saver inclus)" : "") + (top.approx ? " · prix du miel inconnu, valeur de revente utilisée" : "") + "</div>";
+    }
+    $("#tip").innerHTML = t;
+  }
+
+  /* ---------- ingredient picker ---------- */
+  function renderIngPicker() {
+    var groups = [
+      { t: "Cultures", list: D.crops.filter(function (c) { return c[6] !== null && usedIn[c[0]]; }).map(function (c) { return c[0]; }) },
+      { t: "Arbres", list: D.crops.filter(function (c) { return c[6] === null; }).map(function (c) { return c[0]; }) },
+      { t: "Cueillette", list: Object.keys(D.extras).filter(function (k) { return D.extras[k].type === "gather"; }) },
+      { t: "Boutique & ruche", list: Object.keys(D.extras).filter(function (k) { return D.extras[k].type !== "gather"; }) }
+    ];
+    $("#ing-groups").innerHTML = groups.map(function (g) {
+      return '<div class="ing-group"><h3>' + g.t + '</h3><div class="ing-grid">' + g.list.map(function (s) {
+        var i = C.ingredient(s);
+        return '<button class="ingbtn" data-ing="' + s + '" title="' + i.name + " — " + usedIn[s].length + ' recette(s)"><img src="' + A(s) + '" alt=""><span>' + i.name + "</span></button>";
+      }).join("") + "</div></div>";
+    }).join("");
+  }
+  function syncIngPicker() {
+    $$(".ingbtn").forEach(function (b) { b.setAttribute("aria-pressed", String(state.ings.indexOf(b.dataset.ing) >= 0)); });
+    $("#sel-mini").innerHTML = state.ings.map(function (s) { return '<img src="' + A(s) + '" alt="" title="' + C.ingredient(s).name + '">'; }).join("");
+    $("#clear-ings").hidden = !state.ings.length;
+  }
+
+  /* ---------- recipes ---------- */
+  var SORTS = {
+    profit: function (a, b) { return b.profit - a.profit || a.time - b.time; },
+    time: function (a, b) { return a.time - b.time || b.profit - a.profit; },
+    dph: function (a, b) { return (a.dph === null) - (b.dph === null) || (b.dph || 0) - (a.dph || 0) || b.profit - a.profit; },
+    dpe: function (a, b) { return b.dpe - a.dpe || b.profit - a.profit; }
+  };
+  var TABLE_KEYS = { name: "name", time: "time", cost: "cost", value: "value", profit: "profit", dph: "dph", dpe: "dpe", station: "station" };
+
+  function baseSort() { return String(state.sort).replace(/_$/, ""); }
+  function filtered() {
+    var o = opt();
+    var all = D.recipes.map(function (r) { return C.computeRecipe(r, o, state.plan[r[0]] || 1); });
+    var q = state.q.trim().toLowerCase();
+    var list = all.filter(function (r) {
+      if (state.planOnly && !state.plan[r.slug]) return false;
+      if (r.station > state.station) return false;
+      if (!state.inc.nocrop && !r.hasCrop) return false;
+      if (!state.inc.gather && r.hasGather) return false;
+      if (!state.inc.shop && r.hasShop) return false;
+      if (!state.inc.craft && r.hasCraft) return false;
+      for (var k = 0; k < state.ings.length; k++) {
+        if (!r.ings.some(function (i) { return i.slug === state.ings[k]; })) return false;
+      }
+      if (q && r.name.toLowerCase().indexOf(q) < 0 && !r.ings.some(function (i) { return i.name.toLowerCase().indexOf(q) >= 0; })) return false;
+      return true;
+    });
+    var pareto = C.paretoSet(list);
+    list.forEach(function (r) { r.pareto = !!pareto[r.slug]; });
+    if (state.paretoOnly) list = list.filter(function (r) { return r.pareto; });
+    if (state.view === "table" && TABLE_KEYS[state.sort] && !SORTS[state.sort]) {
+      var k2 = TABLE_KEYS[state.sort], d = state.dir;
+      list.sort(function (a, b) {
+        var x = a[k2], y = b[k2];
+        if (x === null) return 1; if (y === null) return -1;
+        if (typeof x === "string") return d * x.localeCompare(y);
+        return d * (x - y);
+      });
+    } else {
+      list.sort(SORTS[state.sort] || SORTS.profit);
+    }
+    return list;
+  }
+
+  function timeTag(i) {
+    if (i.type === "crop") return '<span class="tm crop">' + fmtTime(i.t) + "</span>";
+    if (i.type === "tree") return '<span class="tm tree">' + (state.treesReady ? "prêt" : fmtTime(i.t)) + "</span>";
+    return '<span class="tm ' + i.type + '">' + TYPE_LABEL[i.type] + "</span>";
+  }
+  function ingTitle(i) {
+    var src = i.type === "crop" ? "Culture · graine " + (i.cash) + " Dew · pousse " + fmtTime(i.t)
+      : i.type === "tree" ? "Arbre (" + i.seedName + ") · fruit toutes les " + fmtTime(C.growTime(i.grow, state.farmLvl))
+      : TYPE_LABEL[i.type] + " · " + i.where;
+    return i.name + " ×" + i.q + " — " + src + " · compté " + i.unit + " Dew/u" + (i.approx ? " (coût inconnu, revente utilisée)" : "") + (i.crit ? " · le plus long à pousser" : "");
+  }
+  function metric(label, val, hot, cls) {
+    return '<div class="m' + (hot ? " hot" : "") + '"><div class="l">' + label + '</div><div class="v' + (cls ? " " + cls : "") + '">' + val + "</div></div>";
+  }
+  function dphTxt(r) { return r.dph === null ? '<span class="na">sans pousse</span>' : DEW + n0(r.dph); }
+
+  function card(r, idx) {
+    var hit = {}; state.ings.forEach(function (s) { hit[s] = true; });
+    var n = state.plan[r.slug] || 0, m = n || 1, T = r.tot;
+    var tags = '<span class="tag" title="Niveau de station de cuisine requis"><img src="' + A("cooking-station") + '" alt="">Station Lv ' + r.station + "</span>" +
+      '<span class="tag" title="Énergie dépensée pour cuisiner un plat"><img src="assets/energy-cost.webp" alt="">' + r.energy + "</span>" +
+      (r.recipePrice ? '<span class="tag kun" title="Recette vendue chez Kun\'s Recipe Shop (prix de base)">Recette ' + r.recipePrice + "</span>" : "") +
+      (r.pareto ? '<span class="tag best" title="Aucune autre recette n\'est à la fois plus rapide et plus rentable">Meilleur compromis</span>' : "") +
+      (!r.hasCrop ? '<span class="tag warn" title="Aucun ingrédient à faire pousser">Aucune pousse</span>' : "");
+    var ings = r.ings.map(function (i) {
+      return '<a class="ing' + (i.crit ? " crit" : "") + (hit[i.slug] ? " hit" : "") + '" href="' + CODEX + i.slug + '" title="' + ingTitle(i) + (n ? " · " + (i.q * n) + " au total pour " + n + " plats" : "") + '">' +
+        '<span class="ing-art"><img src="' + A(i.slug) + '" alt="" loading="lazy"><span class="qty">×' + (i.q * m) + "</span></span>" +
+        '<span class="nm">' + i.name + "</span>" + timeTag(i) + "</a>";
+    }).join("");
+    var s = baseSort();
+    var per = function (v) { return n ? ' title="Par plat : ' + v + '"' : ""; };
+    function mt(label, val, hot, cls, unit) {
+      return '<div class="m' + (hot ? " hot" : "") + '"' + per(unit) + '><div class="l">' + label + '</div><div class="v' + (cls ? " " + cls : "") + '">' + val + "</div></div>";
+    }
+    var metrics = mt("Coût", DEW + T.cost + (r.approx ? "≈" : ""), false, "", r.cost + " Dew") +
+      mt("Vente", DEW + T.value, false, "", r.value + " Dew") +
+      mt("Profit", DEW + T.profit, s === "profit", T.profit < 0 ? "neg" : "", r.profit + " Dew") +
+      mt("Temps", T.time ? fmtTime(T.time) : '<span class="na">—</span>', s === "time", "", r.time ? fmtTime(r.time) : "—") +
+      (s === "dpe" ? mt("Dew/⚡", DEW + (Math.round(r.dpe * 10) / 10).toLocaleString("fr-FR"), true, "", "même ratio")
+        : mt("Dew / h", T.dph === null ? '<span class="na">sans pousse</span>' : DEW + n0(T.dph), s === "dph", "", r.dph === null ? "—" : n0(r.dph) + " Dew/h"));
+    var qty = n
+      ? '<div class="qtyrow"><span class="lbl">Je cuisine</span>' + qtyCtl(r.slug, n) + '<span class="tot"><img src="assets/energy-cost.webp" alt="">' + T.energy + ' énergie</span><button class="iconbtn" data-remove="' + r.slug + '" title="Retirer du plan" aria-label="Retirer du plan">' + ICON_X + "</button></div>"
+      : '<div class="qtyrow"><button class="addbtn" data-add="' + r.slug + '">' + ICON_PLUS + 'Ajouter au plan</button><span class="tot">valeurs pour 1 plat</span></div>';
+    return '<article class="panel rcard' + (n ? " inplan" : "") + '" data-slug="' + r.slug + '">' +
+      '<span class="rank' + (idx < 3 ? " top" : "") + '">#' + (idx + 1) + "</span>" +
+      '<div class="rhead"><span class="dish-art"><img src="' + A(r.slug) + '" alt="" loading="lazy"></span><div>' +
+      '<a class="rname" href="' + CODEX + r.slug + '">' + r.name + "</a>" +
+      '<div class="tags">' + tags + "</div></div></div>" +
+      '<div class="ings">' + ings + "</div>" +
+      (n ? '<div class="totcap">Total pour ' + n + " plat" + (n > 1 ? "s" : "") + "</div>" : "") +
+      '<div class="metrics">' + metrics + "</div>" + qty + "</article>";
+  }
+
+  function th(label, k, num) {
+    var arrow = "";
+    if (state.sort === k && SORTS[k]) arrow = '<span class="arr">' + (k === "time" ? "▲" : "▼") + "</span>";
+    else if (state.sort === k || state.sort === k + "_") arrow = '<span class="arr">' + (state.dir > 0 ? "▲" : "▼") + "</span>";
+    return '<th' + (num ? ' class="num"' : "") + (k ? ' data-k="' + k + '"' : "") + ">" + label + arrow + "</th>";
+  }
+  function table(list) {
+    var s = baseSort();
+    var rows = list.map(function (r, idx) {
+      var mi = r.ings.map(function (i) {
+        return '<span class="mini-ing' + (i.crit ? " crit" : "") + '" title="' + ingTitle(i) + '"><img src="' + A(i.slug) + '" alt="" loading="lazy"><i>' + i.q + "</i></span>";
+      }).join("");
+      var n = state.plan[r.slug] || 0;
+      return "<tr" + (n ? ' class="inplan"' : "") + "><td class='num' style='color:var(--muted);font-weight:800'>" + (idx + 1) + "</td>" +
+        '<td><a class="cell" href="' + CODEX + r.slug + '"><span class="ci"><img src="' + A(r.slug) + '" alt="" loading="lazy"></span>' + r.name + (r.pareto ? ' <span class="tag best">compromis</span>' : "") + "</a></td>" +
+        '<td><div class="mini-ings">' + mi + "</div></td>" +
+        '<td class="num' + (s === "time" ? " hot" : "") + '">' + (r.time ? fmtTime(r.time) : "—") + "</td>" +
+        '<td class="num' + (s === "cost" ? " hot" : "") + '">' + r.cost + (r.approx ? "≈" : "") + "</td>" +
+        '<td class="num' + (s === "value" ? " hot" : "") + '">' + r.value + "</td>" +
+        '<td class="num strong' + (s === "profit" ? " hot" : "") + '">' + r.profit + "</td>" +
+        '<td class="num' + (s === "dph" ? " hot" : "") + '">' + (r.dph === null ? "—" : n0(r.dph)) + "</td>" +
+        '<td class="num' + (s === "dpe" ? " hot" : "") + '">' + (Math.round(r.dpe * 10) / 10).toLocaleString("fr-FR") + "</td>" +
+        '<td class="num' + (s === "station" ? " hot" : "") + '">' + r.station + "</td>" +
+        "<td>" + (n ? qtyCtl(r.slug, n, true) : '<button class="addbtn sm" data-add="' + r.slug + '">' + ICON_PLUS + "Plan</button>") + "</td></tr>";
+    }).join("");
+    return '<p class="pnote" style="margin:0 0 8px">Valeurs pour 1 plat. Les totaux de ton plan sont dans <b>Mon plan</b>.</p><div class="panel tablewrap"><table id="rec-table"><thead><tr><th class="num">#</th>' +
+      th("Plat", "name") + "<th>Ingrédients</th>" + th("Temps", "time", 1) + th("Coût", "cost", 1) + th("Vente", "value", 1) +
+      th("Profit", "profit", 1) + th("Dew/h", "dph", 1) + th("Dew/⚡", "dpe", 1) + th("Station", "station", 1) + '<th title="Nombre de plats dans ton plan">Plan</th>' +
+      "</tr></thead><tbody>" + rows + "</tbody></table></div>";
+  }
+
+  function highlights(list) {
+    if (!list.length) { $("#highlights").innerHTML = ""; return; }
+    var withCrop = list.filter(function (r) { return r.time > 0 && r.profit > 0; });
+    var bestP = list.slice().sort(SORTS.profit)[0];
+    var fast = withCrop.slice().sort(SORTS.time)[0];
+    var bestH = withCrop.slice().sort(SORTS.dph)[0];
+    function hl(k, r, v, sort) {
+      if (!r) return '<div class="panel hl" style="opacity:.6"><div><div class="k">' + k + '</div><div class="n">—</div></div></div>';
+      return '<button class="panel hl" data-goto="' + sort + '"><span class="art"><img src="' + A(r.slug) + '" alt=""></span><span><span class="k">' + k + '</span><span class="n" style="display:block">' + r.name + '</span><span class="v" style="display:block">' + v + "</span></span></button>";
+    }
+    $("#highlights").innerHTML =
+      hl("Le plus rentable", bestP, DEW + bestP.profit + " de profit" + (bestP.time ? " · " + fmtTime(bestP.time) : ""), "profit") +
+      hl("Le plus rapide (avec pousse)", fast, fast ? CLOCK + fmtTime(fast.time) + " · " + DEW + fast.profit + " de profit" : "", "time") +
+      hl("Meilleur Dew / heure", bestH, bestH ? DEW + n0(bestH.dph) + " / h · " + fmtTime(bestH.time) : "", "dph");
+  }
+
+  function renderRecipes() {
+    var list = filtered();
+    $("#count").textContent = list.length + " recette" + (list.length > 1 ? "s" : "") + " sur " + D.recipes.length;
+    highlights(list);
+    renderTip(list[0]);
+    syncIngPicker();
+    if (!list.length) {
+      $("#results").innerHTML = '<div class="panel empty"><img src="assets/T_UI_NPC_Quest_Icons_Pebble.webp" alt=""><div class="say"><b>Pebble</b><p>Aucune recette ne correspond. Retire un filtre ou un ingrédient, ou monte le niveau de station.</p></div></div>';
+      return;
+    }
+    $("#results").innerHTML = state.view === "table" ? table(list) : '<div class="grid">' + list.map(card).join("") + "</div>";
+  }
+
+  /* ---------- crops ---------- */
+  function renderCrops() {
+    var o = opt();
+    var rows = D.crops.map(function (c) { return C.computeCrop(c[0], o); });
+    var q = state.q.trim().toLowerCase();
+    if (q) rows = rows.filter(function (r) { return r.name.toLowerCase().indexOf(q) >= 0 || r.seedName.toLowerCase().indexOf(q) >= 0; });
+    var k = state.cropSort, d = state.cropDir;
+    rows.sort(function (a, b) {
+      var x = k === "uses" ? (usedIn[a.slug] || []).length : a[k], y = k === "uses" ? (usedIn[b.slug] || []).length : b[k];
+      if (x === null) return 1; if (y === null) return -1;
+      if (typeof x === "string") return d * x.localeCompare(y);
+      return d * (x - y);
+    });
+    function cth(label, key, num, tip) {
+      var arr = state.cropSort === key ? '<span class="arr">' + (state.cropDir > 0 ? "▲" : "▼") + "</span>" : "";
+      return "<th" + (num ? ' class="num"' : "") + (tip ? ' title="' + tip + '"' : "") + ' data-ck="' + key + '">' + label + arr + "</th>";
+    }
+    var body = rows.map(function (r) {
+      var uses = usedIn[r.slug] || [];
+      var stack = uses.length
+        ? '<div class="dish-stack"><button data-filter-ing="' + r.slug + '" title="Voir les ' + uses.length + ' recettes">' + uses.slice(0, 5).map(function (s) { return '<img src="' + A(s) + '" alt="" title="' + recipeBySlug[s][1] + '" loading="lazy">'; }).join("") + "<span>" + uses.length + " recette" + (uses.length > 1 ? "s" : "") + " ›</span></button></div>"
+        : '<span style="color:#9aa79f;font-size:13px">aucune</span>';
+      var hot = function (key) { return state.cropSort === key ? " hot" : ""; };
+      return "<tr>" +
+        '<td><a class="cell" href="' + CODEX + r.seed + '"><span class="ci"><img src="' + A(r.seed) + '" alt="" loading="lazy"></span>' + r.seedName + "</a></td>" +
+        '<td><a class="cell" href="' + CODEX + r.slug + '"><span class="ci"><img src="' + A(r.slug) + '" alt="" loading="lazy"></span>' + r.name + "</a></td>" +
+        '<td class="num' + hot("grow") + '">' + fmtTime(r.grow) + "</td>" +
+        '<td class="num' + hot("water") + '">' + fmtTime(r.water) + "</td>" +
+        '<td class="num' + hot("cost") + '">' + (r.cost === null ? "—" : r.cost) + "</td>" +
+        '<td class="num' + hot("value") + '">' + r.value + "</td>" +
+        '<td class="num strong' + hot("profit") + '">' + (r.profit === null ? "—" : r.profit) + "</td>" +
+        '<td class="num strong' + hot("dph") + '">' + (r.dph === null ? "—" : n0(r.dph)) + "</td>" +
+        "<td>" + stack + "</td></tr>";
+    }).join("");
+    $("#crops-table").innerHTML = "<thead><tr>" + cth("Graine", "seedName") + cth("Récolte", "name") + cth("Pousse", "grow", 1) + cth("Arrosage", "water", 1, "Durée pendant laquelle un arrosage tient") +
+      cth("Coût", "cost", 1) + cth("Vente", "value", 1) + cth("Profit", "profit", 1) + cth("Dew / h", "dph", 1) + cth("Utilisée dans", "uses") + "</tr></thead><tbody>" + body + "</tbody>";
+
+    var ex = Object.keys(D.extras).filter(function (s) { return !q || D.extras[s].name.toLowerCase().indexOf(q) >= 0; });
+    $("#extras").innerHTML = ex.map(function (s) {
+      var e = D.extras[s], uses = usedIn[s] || [];
+      var price = e.type === "shop" ? " · " + e.p[1] + " Dew" : e.type === "craft" ? " · revente " + e.p[0] + " Dew" : "";
+      return '<button class="panel xcard" data-filter-ing="' + s + '"><img src="' + A(s) + '" alt="" loading="lazy"><span><b>' + e.name + "</b><small>" + TYPE_LABEL[e.type] + " · " + e.where + price + "</small><small style='color:var(--teal);font-weight:800'>" + uses.length + " recette" + (uses.length > 1 ? "s" : "") + " ›</small></span></button>";
+    }).join("");
+  }
+
+  /* ---------- plan ---------- */
+  var drawerOpen = false, lastPlan = null;
+  var GROUPS = [
+    { type: "crop", title: "À planter", icon: "T_UI_Attribute_Icons_Farm" },
+    { type: "tree", title: "Fruits d'arbres", icon: "coconut-tree-sapling" },
+    { type: "gather", title: "À cueillir", icon: "wild-berries" },
+    { type: "shop", title: "À acheter chez Kun", icon: "egg" },
+    { type: "craft", title: "Ruche", icon: "honey" }
+  ];
+  function plotsLabel() { return state.plotsLimited ? state.plots + " parcelle" + (state.plots > 1 ? "s" : "") : "parcelles illimitées"; }
+
+  function renderPlan() {
+    var P = C.computePlan(state.plan, opt());
+    lastPlan = P;
+    var count = P.count;
+    var badge = $("#plan-badge");
+    badge.textContent = count; badge.classList.toggle("zero", !count);
+    var bar = $("#planbar");
+    bar.hidden = !count || drawerOpen;
+    document.body.classList.toggle("has-plan", !!count);
+    if (count) {
+      bar.innerHTML = '<span class="stack">' + P.entries.slice(0, 4).map(function (e) { return '<img src="' + A(e.slug) + '" alt="">'; }).join("") + "</span>" +
+        '<span class="info">' + count + " plat" + (count > 1 ? "s" : "") + " · " + DEW + "+" + n0(P.profit) + (P.time ? " · " + CLOCK + fmtTime(P.time) : "") + "</span>" +
+        '<span class="go">Voir le plan ›</span>';
+    }
+    var body = $("#plan-body");
+    if (!count) {
+      body.innerHTML = '<div class="panel empty" style="flex-direction:column;text-align:center"><img src="assets/T_UI_NPC_Quest_Icons_Pebble.webp" alt=""><div class="say"><b>Pebble</b><p>Ton plan est vide. Clique sur <b>Ajouter au plan</b> sous une recette, puis choisis combien de fois tu veux la cuisiner.</p></div></div>';
+      return;
+    }
+    var h = "";
+    // Totaux
+    h += '<section class="psec"><div class="ptot">' +
+      metric("Profit", DEW + n0(P.profit), true, P.profit < 0 ? "neg" : "") +
+      metric("Temps", P.time ? fmtTime(P.time) : '<span class="na">—</span>', false) +
+      metric("Dew / h", P.dph === null ? '<span class="na">—</span>' : DEW + n0(P.dph), false) +
+      metric("Énergie", '<img class="dew" src="assets/energy-cost.webp" alt="">' + P.energy, false) + "</div>" +
+      '<div class="panel plines">' +
+      '<div class="pline"><span>Vente totale (' + count + " plat" + (count > 1 ? "s" : "") + ")</span><b>" + DEW + n0(P.value) + "</b></div>" +
+      '<div class="pline"><span>Coût des ingrédients <span style="color:var(--muted)">(' + (state.mode === "cash" ? "ce que ça coûte" : "prix de revente") + ")</span></span><b>" + DEW + n0(P.raw) + (P.approx ? "≈" : "") + "</b></div>" +
+      (P.saver > 0.5 ? '<div class="pline sub"><span>Ingredient Saver (économie moyenne)</span><b style="color:var(--teal)">−' + n0(P.saver) + "</b></div>" : "") +
+      '<div class="pline big"><span>Profit</span><b>' + DEW + n0(P.profit) + "</b></div>" +
+      '<div class="pline sub"><span>À dépenser : graines ' + n0(P.seedCost) + (P.shopCost ? " + boutique " + n0(P.shopCost) : "") + "</span><b>" + DEW + n0(P.seedCost + P.shopCost) + "</b></div>" +
+      "</div></section>";
+    // Parcelles
+    h += '<section class="psec"><h3>Parcelles<small>' + P.seeds + " graine" + (P.seeds > 1 ? "s" : "") + " à planter</small></h3>" +
+      '<div class="panel prow2" style="justify-content:space-between;flex-wrap:wrap"><span class="pnote">Temps calculé avec ' + plotsLabel() + (P.ings.some(function (i) { return i.type === "tree"; }) ? (state.treesReady ? ", arbres déjà plantés" : ", arbres comptés 1 cycle") : "") + "</span>" +
+      '<span class="plots-ctl">' + plotsCtl() + "</span></div></section>";
+    // Recettes
+    h += '<section class="psec"><h3><img src="assets/T_UI_Attribute_Icons_Cook.webp" alt="">Recettes<small>' + P.entries.length + " recette" + (P.entries.length > 1 ? "s" : "") + "</small></h3><div class=\"panel\">" +
+      P.entries.map(function (e) {
+        return '<div class="prow2"><img class="di" src="' + A(e.slug) + '" alt=""><span class="nm"><b>' + e.name + "</b><small>" +
+          "profit " + n0(e.tot.profit) + " · coût " + n0(e.tot.cost) + " · " + (e.tot.time ? fmtTime(e.tot.time) : "sans pousse") + "</small></span>" +
+          qtyCtl(e.slug, e.tot.n, true) + '<button class="iconbtn" data-remove="' + e.slug + '" aria-label="Retirer ' + e.name + '">' + ICON_X + "</button></div>";
+      }).join("") + "</div></section>";
+    // Ingrédients
+    GROUPS.forEach(function (g) {
+      var list = P.ings.filter(function (i) { return i.type === g.type; });
+      if (!list.length) return;
+      var qty = list.reduce(function (a, i) { return a + i.qty; }, 0);
+      var right = g.type === "crop" ? qty + " graine" + (qty > 1 ? "s" : "") + " · " + n0(P.seedCost) + " Dew"
+        : g.type === "shop" ? qty + " article" + (qty > 1 ? "s" : "") + " · " + n0(P.shopCost) + " Dew"
+        : qty + " au total";
+      h += '<section class="psec"><h3><img src="' + A(g.icon) + '" alt="">' + g.title + "<small>" + right + '</small></h3><div class="panel">' +
+        list.map(function (i) {
+          var sub, cost;
+          if (i.type === "crop") {
+            sub = '<img src="' + A(i.seed) + '" alt="" style="width:16px;height:16px;vertical-align:-3px"> ' + i.seedName + " · " + i.cash + " Dew/u · pousse " + fmtTime(i.t);
+            cost = '<span class="c">' + DEW + n0(i.qty * i.cash) + "</span>";
+          } else if (i.type === "tree") {
+            sub = i.seedName + " · " + (state.treesReady ? "déjà planté" : "un fruit toutes les " + fmtTime(C.growTime(i.grow, state.farmLvl)));
+            cost = '<span class="c free">gratuit</span>';
+          } else if (i.type === "shop") {
+            sub = i.where + " · " + i.cash + " Dew/u";
+            cost = '<span class="c">' + DEW + n0(i.qty * i.cash) + "</span>";
+          } else if (i.type === "craft") {
+            sub = i.where;
+            cost = '<span class="c">—</span>';
+          } else {
+            sub = i.where;
+            cost = '<span class="c free">gratuit</span>';
+          }
+          return '<div class="prow2" title="Pour : ' + i.recipes.join(", ") + '"><img class="di ing" src="' + A(i.slug) + '" alt=""><span class="nm"><b>' + i.name + "</b><small>" + sub + '</small></span><span class="q">×' + i.qty + "</span>" + cost + "</div>";
+        }).join("") + "</div></section>";
+    });
+    h += '<div class="pactions"><button class="btn primary" data-copy-plan><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg><span>Copier la liste</span></button>' +
+      '<button class="btn" data-clear-plan>' + ICON_X + "Vider le plan</button></div>" +
+      '<p class="pnote">Quantités exactes (sans compter la chance de Fruitful Harvest ou d\'Ingredient Saver). Le coût et la vente incluent la moyenne des bonus de niveau.</p>';
+    body.innerHTML = h;
+  }
+
+  function planText() {
+    var P = lastPlan; if (!P || !P.count) return "";
+    var L = ["Plan de cuisine Loftia — " + P.count + " plat" + (P.count > 1 ? "s" : "")];
+    P.entries.forEach(function (e) { L.push("• " + e.tot.n + "× " + e.name); });
+    GROUPS.forEach(function (g) {
+      var list = P.ings.filter(function (i) { return i.type === g.type; });
+      if (!list.length) return;
+      L.push(""); L.push(g.title + " :");
+      list.forEach(function (i) {
+        var extra = i.type === "crop" ? " (" + i.seedName + ", " + n0(i.qty * i.cash) + " Dew, " + fmtTime(i.t) + ")"
+          : i.type === "shop" ? " (" + n0(i.qty * i.cash) + " Dew)" : i.where ? " (" + i.where + ")" : "";
+        L.push("  - " + i.name + " ×" + i.qty + extra);
+      });
+    });
+    L.push("");
+    L.push("Vente " + n0(P.value) + " · Coût " + n0(P.cost) + " · Profit " + n0(P.profit) + " Dew");
+    L.push("Temps " + (P.time ? fmtTime(P.time) : "—") + " (" + plotsLabel() + ") · Énergie " + P.energy + " · À dépenser " + n0(P.seedCost + P.shopCost) + " Dew");
+    return L.join("\n");
+  }
+
+  function openPlan(open) {
+    drawerOpen = open;
+    $("#drawer").classList.toggle("open", open);
+    $("#overlay").classList.toggle("open", open);
+    $("#planbar").hidden = open || !planCount();
+    if (open) setTimeout(function () { var x = $("#drawer .xbtn"); if (x) x.focus(); }, 50);
+  }
+
+  function setQty(slug, n) {
+    n = Math.round(Number(n));
+    if (!isFinite(n) || n <= 0) delete state.plan[slug];
+    else state.plan[slug] = Math.min(999, n);
+  }
+
+  /* ---------- render ---------- */
+  function render() {
+    renderControls();
+    if (state.tab === "recettes") renderRecipes(); else { renderCrops(); renderTip(null); }
+    renderPlan();
+    save();
+  }
+
+  /* ---------- events ---------- */
+  $$(".stepper").forEach(function (st) {
+    st.addEventListener("click", function (e) {
+      var b = e.target.closest(".step"); if (!b) return;
+      var k = st.dataset.skill;
+      state[k] = Math.max(1, Math.min(20, state[k] + Number(b.dataset.d)));
+      render();
+    });
+  });
+  $$(".seg[data-key]").forEach(function (seg) {
+    seg.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      var k = seg.dataset.key, v = b.dataset.v;
+      state[k] = k === "station" ? Number(v) : v;
+      if (k === "view" && v === "cards" && !SORTS[state.sort]) state.sort = "profit";
+      render();
+    });
+  });
+  $("#sortbar").addEventListener("click", function (e) {
+    var b = e.target.closest(".sortbtn"); if (!b) return;
+    state.sort = b.dataset.sort; render();
+  });
+  $("#filterbar").addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
+    if (b.dataset.inc) state.inc[b.dataset.inc] = !state.inc[b.dataset.inc];
+    if (b.dataset.opt) state[b.dataset.opt] = !state[b.dataset.opt];
+    render();
+  });
+  $("#ing-groups").addEventListener("click", function (e) {
+    var b = e.target.closest(".ingbtn"); if (!b) return;
+    var s = b.dataset.ing, i = state.ings.indexOf(s);
+    if (i >= 0) state.ings.splice(i, 1); else state.ings.push(s);
+    render();
+  });
+  $("#clear-ings").addEventListener("click", function (e) { e.preventDefault(); state.ings = []; render(); });
+  $("#highlights").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-goto]"); if (!b) return;
+    state.sort = b.dataset.goto; render();
+    var first = $("#results"); if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  $("#results").addEventListener("click", function (e) {
+    var h = e.target.closest("th[data-k]"); if (!h) return;
+    var k = h.dataset.k;
+    if (state.sort === k && !SORTS[k]) state.dir = -state.dir;
+    else if (state.sort === k && SORTS[k]) { state.sort = k + "_"; state.dir = (k === "time") ? -1 : 1; TABLE_KEYS[k + "_"] = k; }
+    else { state.sort = k; state.dir = (k === "name" || k === "cost" || k === "time" || k === "station") ? 1 : -1; }
+    render();
+  });
+  $("#view-cultures").addEventListener("click", function (e) {
+    var h = e.target.closest("th[data-ck]");
+    if (h) {
+      var k = h.dataset.ck;
+      if (state.cropSort === k) state.cropDir = -state.cropDir;
+      else { state.cropSort = k; state.cropDir = (k === "grow" || k === "water" || k === "cost" || k === "name" || k === "seedName") ? 1 : -1; }
+      render(); return;
+    }
+    var f = e.target.closest("[data-filter-ing]");
+    if (f) {
+      state.ings = [f.dataset.filterIng]; state.q = ""; $("#q").value = "";
+      $("#ingpick").open = true;
+      location.hash = "recettes";
+    }
+  });
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-add],[data-qty-step],[data-remove],[data-plots-mode],[data-plots-step],[data-open-plan],[data-close-plan],[data-clear-plan],[data-copy-plan]");
+    if (!t) return;
+    if (t.hasAttribute("data-add")) { setQty(t.dataset.add, 1); render(); return; }
+    if (t.hasAttribute("data-qty-step")) { var sl = t.dataset.qtyStep; setQty(sl, (state.plan[sl] || 0) + Number(t.dataset.d)); render(); return; }
+    if (t.hasAttribute("data-remove")) { delete state.plan[t.dataset.remove]; render(); return; }
+    if (t.hasAttribute("data-plots-mode")) { state.plotsLimited = t.dataset.plotsMode === "limited"; render(); return; }
+    if (t.hasAttribute("data-plots-step")) { state.plots = Math.max(1, Math.min(99, state.plots + Number(t.dataset.plotsStep))); render(); return; }
+    if (t.hasAttribute("data-open-plan")) { openPlan(true); return; }
+    if (t.hasAttribute("data-close-plan")) { openPlan(false); return; }
+    if (t.hasAttribute("data-clear-plan")) { state.plan = {}; render(); return; }
+    if (t.hasAttribute("data-copy-plan")) {
+      var txt = planText(), lbl = t.querySelector("span");
+      var done = function (ok) { if (lbl) { lbl.textContent = ok ? "Copié !" : "Copie impossible"; setTimeout(function () { lbl.textContent = "Copier la liste"; }, 1600); } };
+      try {
+        navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(fallbackCopy(txt)); });
+      } catch (err) { done(fallbackCopy(txt)); }
+    }
+  });
+  function fallbackCopy(txt) {
+    try {
+      var ta = document.createElement("textarea"); ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
+    } catch (e) { return false; }
+  }
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.matches && t.matches("input[data-qty-input]")) { setQty(t.dataset.qtyInput, t.value); render(); }
+    if (t.matches && t.matches("input[data-plots-input]")) { var v = Math.round(Number(t.value)); state.plots = isFinite(v) && v >= 1 ? Math.min(99, v) : 1; render(); }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && e.target.matches && e.target.matches("input[data-qty-input], input[data-plots-input]")) e.target.blur();
+    if (e.key === "Escape" && drawerOpen) openPlan(false);
+  });
+  var qEl = $("#q");
+  qEl.addEventListener("input", function () { state.q = qEl.value; render(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && document.activeElement !== qEl && !(e.target.matches && e.target.matches("input, textarea, select"))) { e.preventDefault(); qEl.focus(); qEl.select(); }
+    if (e.key === "Escape" && document.activeElement === qEl) { qEl.value = ""; state.q = ""; render(); qEl.blur(); }
+  });
+  function route() {
+    var h = (location.hash || "").replace("#", "");
+    state.tab = h === "cultures" ? "cultures" : "recettes";
+    render();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", route);
+
+  // Tri de tableau inversé sur une colonne déjà triée par un bouton (ex. profit croissant)
+  ["profit", "dph", "dpe", "time"].forEach(function (k) { TABLE_KEYS[k + "_"] = k; });
+  if (!SORTS[state.sort] && !TABLE_KEYS[state.sort]) state.sort = "profit";
+  if (state.view === "cards" && !SORTS[state.sort]) state.sort = "profit";
+
+  renderIngPicker();
+  if (state.ings.length) $("#ingpick").open = true;
+  route();
+})();
+</script>
+</body>
+</html>

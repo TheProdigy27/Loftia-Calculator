@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Icône originale de Loftia Planner : une marmite et une pousse (aucun asset du jeu) -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#d4efe4"/>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#237a68" stroke-width="20"/>
+  <path d="M256 236c0-56 24-96 78-112-4 58-30 96-78 112z" fill="#a3bf62"/>
+  <path d="M256 236c0-44-20-76-62-88 2 46 24 76 62 88z" fill="#98d4a8"/>
+  <path d="M256 236v-60" stroke="#508372" stroke-width="12" stroke-linecap="round"/>
+  <rect x="120" y="236" width="272" height="34" rx="17" fill="#1b5f51"/>
+  <path d="M140 270h232l-18 116a40 40 0 0 1-40 34H198a40 40 0 0 1-40-34z" fill="#237a68"/>
+  <path d="M176 312h160" stroke="#4fd0b8" stroke-width="12" stroke-linecap="round" opacity=".7"/>
+  <rect x="96" y="276" width="40" height="22" rx="11" fill="#1b5f51"/>
+  <rect x="376" y="276" width="40" height="22" rx="11" fill="#1b5f51"/>
+</svg>

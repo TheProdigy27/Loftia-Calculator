@@ -1,0 +1,43 @@
+name: Release Windows
+
+# Publier une version : changer "version" dans src-tauri/tauri.conf.json, puis
+#   git tag v0.1.0 && git push origin v0.1.0
+# Le workflow construit l'installeur NSIS (-setup.exe) et crée un brouillon de release GitHub.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Installeur Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - run: npm ci
+      - run: npm test
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          releaseName: 'Loftia Planner ${{ github.ref_name }}'
+          releaseBody: 'Installeur Windows : télécharge le fichier -setup.exe ci-dessous.'
+          releaseDraft: true
+          prerelease: false

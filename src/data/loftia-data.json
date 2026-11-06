@@ -1,0 +1,1613 @@
+{
+  "schemaVersion": 1,
+  "source": "loftiacodex.com",
+  "extracted": "2026-11-06",
+  "perks": {
+    "farming": {
+      "double": [
+        {
+          "level": 10,
+          "value": 0.05,
+          "name": "Fruitful Harvest I"
+        },
+        {
+          "level": 20,
+          "value": 0.05,
+          "name": "Fruitful Harvest II"
+        }
+      ],
+      "faster": [
+        {
+          "level": 15,
+          "value": 0.05,
+          "name": "Rapid Growth I"
+        },
+        {
+          "level": 20,
+          "value": 0.05,
+          "name": "Rapid Growth II"
+        }
+      ],
+      "water": [
+        {
+          "level": 5,
+          "value": 0.15,
+          "name": "Deep Hydration I"
+        },
+        {
+          "level": 15,
+          "value": 0.25,
+          "name": "Deep Hydration II"
+        }
+      ]
+    },
+    "cooking": {
+      "refund": [
+        {
+          "level": 2,
+          "value": 0.05,
+          "name": "Ingredient Saver I"
+        },
+        {
+          "level": 15,
+          "value": 0.05,
+          "name": "Ingredient Saver II"
+        }
+      ],
+      "double": [
+        {
+          "level": 10,
+          "value": 0.05,
+          "name": "Big Meals I"
+        },
+        {
+          "level": 20,
+          "value": 0.05,
+          "name": "Big Meals II"
+        }
+      ]
+    }
+  },
+  "crops": [
+    {
+      "slug": "blue-cap-mushroom",
+      "seed": "blue-cap-mushroom-2",
+      "name": "Blue Cap Mushroom",
+      "seedName": "Blue Cap Mushroom",
+      "grow": 40,
+      "water": 10,
+      "seedPrice": 40,
+      "sell": 100
+    },
+    {
+      "slug": "basil",
+      "seed": "basil-seed",
+      "name": "Basil",
+      "seedName": "Basil Seed",
+      "grow": 30,
+      "water": 10,
+      "seedPrice": 40,
+      "sell": 70
+    },
+    {
+      "slug": "spinach",
+      "seed": "spinach-seed",
+      "name": "Spinach",
+      "seedName": "Spinach Seed",
+      "grow": 20,
+      "water": 5,
+      "seedPrice": 30,
+      "sell": 50
+    },
+    {
+      "slug": "cauliflower",
+      "seed": "cauliflower-seed",
+      "name": "Cauliflower",
+      "seedName": "Cauliflower Seed",
+      "grow": 10,
+      "water": 5,
+      "seedPrice": 20,
+      "sell": 30
+    },
+    {
+      "slug": "tomato",
+      "seed": "tomato-seed",
+      "name": "Tomato",
+      "seedName": "Tomato Seed",
+      "grow": 15,
+      "water": 5,
+      "seedPrice": 15,
+      "sell": 30
+    },
+    {
+      "slug": "chili-pepper",
+      "seed": "chili-pepper-seed",
+      "name": "Chili Pepper",
+      "seedName": "Chili Pepper Seed",
+      "grow": 60,
+      "water": 15,
+      "seedPrice": 30,
+      "sell": 85
+    },
+    {
+      "slug": "garlic",
+      "seed": "garlic-seed",
+      "name": "Garlic",
+      "seedName": "Garlic Seed",
+      "grow": 60,
+      "water": 20,
+      "seedPrice": 40,
+      "sell": 85
+    },
+    {
+      "slug": "eggplant",
+      "seed": "eggplant-seed",
+      "name": "Eggplant",
+      "seedName": "Eggplant Seed",
+      "grow": 45,
+      "water": 15,
+      "seedPrice": 20,
+      "sell": 50
+    },
+    {
+      "slug": "radish",
+      "seed": "radish-seed",
+      "name": "Radish",
+      "seedName": "Radish Seed",
+      "grow": 40,
+      "water": 20,
+      "seedPrice": 30,
+      "sell": 55
+    },
+    {
+      "slug": "rice",
+      "seed": "rice-seed",
+      "name": "Rice",
+      "seedName": "Rice Seed",
+      "grow": 90,
+      "water": 45,
+      "seedPrice": 30,
+      "sell": 80
+    },
+    {
+      "slug": "onion",
+      "seed": "onion-seed",
+      "name": "Onion",
+      "seedName": "Onion Seed",
+      "grow": 30,
+      "water": 15,
+      "seedPrice": 20,
+      "sell": 35
+    },
+    {
+      "slug": "carrot",
+      "seed": "carrot-seed",
+      "name": "Carrot",
+      "seedName": "Carrot Seed",
+      "grow": 10,
+      "water": 10,
+      "seedPrice": 10,
+      "sell": 15
+    },
+    {
+      "slug": "cotton",
+      "seed": "cotton-seed",
+      "name": "Cotton",
+      "seedName": "Cotton Seed",
+      "grow": 10,
+      "water": 10,
+      "seedPrice": 5,
+      "sell": 10
+    },
+    {
+      "slug": "lettuce",
+      "seed": "lettuce-seed",
+      "name": "Lettuce",
+      "seedName": "Lettuce Seed",
+      "grow": 10,
+      "water": 5,
+      "seedPrice": 5,
+      "sell": 10
+    },
+    {
+      "slug": "potato",
+      "seed": "potato-seed",
+      "name": "Potato",
+      "seedName": "Potato Seed",
+      "grow": 20,
+      "water": 10,
+      "seedPrice": 15,
+      "sell": 25
+    },
+    {
+      "slug": "wheat",
+      "seed": "wheat-seed",
+      "name": "Wheat",
+      "seedName": "Wheat Seed",
+      "grow": 60,
+      "water": 30,
+      "seedPrice": 20,
+      "sell": 45
+    },
+    {
+      "slug": "watermelon",
+      "seed": "watermelon-seed",
+      "name": "Watermelon",
+      "seedName": "Watermelon Seed",
+      "grow": 60,
+      "water": 60,
+      "seedPrice": 20,
+      "sell": 40
+    },
+    {
+      "slug": "soybeans",
+      "seed": "soybean-seeds",
+      "name": "Soybeans",
+      "seedName": "Soybean Seeds",
+      "grow": 120,
+      "water": 60,
+      "seedPrice": 40,
+      "sell": 75
+    },
+    {
+      "slug": "grape",
+      "seed": "grape-seed",
+      "name": "Grape",
+      "seedName": "Grape Seed",
+      "grow": 180,
+      "water": 90,
+      "seedPrice": 50,
+      "sell": 100
+    },
+    {
+      "slug": "pineapple",
+      "seed": "pineapple-seed",
+      "name": "Pineapple",
+      "seedName": "Pineapple Seed",
+      "grow": 120,
+      "water": 120,
+      "seedPrice": 30,
+      "sell": 60
+    },
+    {
+      "slug": "banana",
+      "seed": "banana-tree-sapling",
+      "name": "Banana",
+      "seedName": "Banana Tree Sapling",
+      "grow": 360,
+      "water": 360,
+      "seedPrice": null,
+      "sell": 10
+    },
+    {
+      "slug": "cacao",
+      "seed": "cacao-tree-sapling",
+      "name": "Cacao",
+      "seedName": "Cacao Tree Sapling",
+      "grow": 360,
+      "water": 360,
+      "seedPrice": null,
+      "sell": 10
+    },
+    {
+      "slug": "coconut",
+      "seed": "coconut-tree-sapling",
+      "name": "Coconut",
+      "seedName": "Coconut Tree Sapling",
+      "grow": 360,
+      "water": 360,
+      "seedPrice": null,
+      "sell": 10
+    }
+  ],
+  "extras": {
+    "oyster-mushrooms": {
+      "name": "Oyster Mushrooms",
+      "type": "gather",
+      "where": "Overgrowth",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "enoki-mushrooms": {
+      "name": "Enoki Mushrooms",
+      "type": "gather",
+      "where": "Overgrowth",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "portobello-mushrooms": {
+      "name": "Portobello Mushrooms",
+      "type": "gather",
+      "where": "The Hills",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "cumin": {
+      "name": "Cumin",
+      "type": "gather",
+      "where": "Overgrowth",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "cinnamon": {
+      "name": "Cinnamon",
+      "type": "gather",
+      "where": "Overgrowth",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "flax": {
+      "name": "Flax",
+      "type": "gather",
+      "where": "Overgrowth",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "bioluminescent-ivy": {
+      "name": "Bioluminescent Ivy",
+      "type": "gather",
+      "where": "Overgrowth",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "salt": {
+      "name": "Salt",
+      "type": "gather",
+      "where": "Cave (Mineral Node)",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "algae": {
+      "name": "Algae",
+      "type": "gather",
+      "where": "Central Lake",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "wild-berries": {
+      "name": "Wild Berries",
+      "type": "gather",
+      "where": "The Hills (Berry Bush)",
+      "sale": 0,
+      "cash": 0,
+      "real": 0
+    },
+    "egg": {
+      "name": "Egg",
+      "type": "shop",
+      "where": "Kun's Recipe Shop",
+      "sale": 3,
+      "cash": 5,
+      "real": 5
+    },
+    "milk": {
+      "name": "Milk",
+      "type": "shop",
+      "where": "Kun's Recipe Shop",
+      "sale": 3,
+      "cash": 5,
+      "real": 5
+    },
+    "butter": {
+      "name": "Butter",
+      "type": "shop",
+      "where": "Kun's Recipe Shop",
+      "sale": 3,
+      "cash": 5,
+      "real": 5
+    },
+    "sugar": {
+      "name": "Sugar",
+      "type": "shop",
+      "where": "Kun's Recipe Shop",
+      "sale": 3,
+      "cash": 5,
+      "real": 5
+    },
+    "cooking-oil": {
+      "name": "Cooking Oil",
+      "type": "shop",
+      "where": "Kun's Recipe Shop",
+      "sale": 3,
+      "cash": 5,
+      "real": 5
+    },
+    "honey": {
+      "name": "Honey",
+      "type": "craft",
+      "where": "Beehive (Clover ×1)",
+      "sale": 5,
+      "cash": null,
+      "real": 5
+    }
+  },
+  "recipes": [
+    {
+      "slug": "oyster-mushroom-gyoza",
+      "name": "Oyster Mushroom Gyoza",
+      "sell": 180,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "oyster-mushrooms",
+          "qty": 2
+        },
+        {
+          "slug": "spinach",
+          "qty": 1
+        },
+        {
+          "slug": "garlic",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "radish-kimchi",
+      "name": "Radish Kimchi",
+      "sell": 185,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "radish",
+          "qty": 1
+        },
+        {
+          "slug": "garlic",
+          "qty": 1
+        },
+        {
+          "slug": "salt",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "baba-ganoush",
+      "name": "Baba Ganoush",
+      "sell": 170,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "eggplant",
+          "qty": 1
+        },
+        {
+          "slug": "garlic",
+          "qty": 1
+        },
+        {
+          "slug": "cumin",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "summer-salad",
+      "name": "Summer Salad",
+      "sell": 170,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "soybeans",
+          "qty": 1
+        },
+        {
+          "slug": "radish",
+          "qty": 1
+        },
+        {
+          "slug": "honey",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "bioluminescent-ivy-soup",
+      "name": "Bioluminescent Ivy Soup",
+      "sell": 70,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "bioluminescent-ivy",
+          "qty": 1
+        },
+        {
+          "slug": "onion",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "ful-medames",
+      "name": "Ful Medames",
+      "sell": 135,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "soybeans",
+          "qty": 1
+        },
+        {
+          "slug": "tomato",
+          "qty": 1
+        },
+        {
+          "slug": "cumin",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "miso-soup",
+      "name": "Miso Soup",
+      "sell": 105,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "soybeans",
+          "qty": 1
+        },
+        {
+          "slug": "enoki-mushrooms",
+          "qty": 1
+        },
+        {
+          "slug": "algae",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "tomato-basil-soup",
+      "name": "Tomato Basil Soup",
+      "sell": 160,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 2
+        },
+        {
+          "slug": "basil",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "chakalaka",
+      "name": "Chakalaka",
+      "sell": 165,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "chili-pepper",
+          "qty": 1
+        },
+        {
+          "slug": "carrot",
+          "qty": 1
+        },
+        {
+          "slug": "onion",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "pineapple-fried-rice",
+      "name": "Pineapple Fried Rice",
+      "sell": 170,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "pineapple",
+          "qty": 1
+        },
+        {
+          "slug": "rice",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "ratatouille",
+      "name": "Ratatouille",
+      "sell": 145,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 1
+        },
+        {
+          "slug": "eggplant",
+          "qty": 1
+        },
+        {
+          "slug": "onion",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "winter-soup",
+      "name": "Winter Soup",
+      "sell": 120,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "portobello-mushrooms",
+          "qty": 1
+        },
+        {
+          "slug": "potato",
+          "qty": 1
+        },
+        {
+          "slug": "basil",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "gimbap",
+      "name": "Gimbap",
+      "sell": 155,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "rice",
+          "qty": 1
+        },
+        {
+          "slug": "spinach",
+          "qty": 1
+        },
+        {
+          "slug": "algae",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "pineapple-cake",
+      "name": "Pineapple Cake",
+      "sell": 135,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "pineapple",
+          "qty": 1
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        },
+        {
+          "slug": "honey",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "mushroom-soup",
+      "name": "Mushroom Soup",
+      "sell": 25,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "portobello-mushrooms",
+          "qty": 2
+        },
+        {
+          "slug": "enoki-mushrooms",
+          "qty": 2
+        }
+      ]
+    },
+    {
+      "slug": "waffles",
+      "name": "Waffles",
+      "sell": 120,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "wheat",
+          "qty": 2
+        },
+        {
+          "slug": "wild-berries",
+          "qty": 2
+        },
+        {
+          "slug": "butter",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "congee",
+      "name": "Congee",
+      "sell": 100,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "rice",
+          "qty": 1
+        },
+        {
+          "slug": "salt",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "omurice",
+      "name": "Omurice",
+      "sell": 135,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "egg",
+          "qty": 1
+        },
+        {
+          "slug": "rice",
+          "qty": 1
+        },
+        {
+          "slug": "tomato",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "cinnamon-rolls",
+      "name": "Cinnamon Rolls",
+      "sell": 65,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "cinnamon",
+          "qty": 2
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "onion-soup",
+      "name": "Onion Soup",
+      "sell": 90,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "onion",
+          "qty": 2
+        },
+        {
+          "slug": "salt",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "spaghetti-al-pomodoro",
+      "name": "Spaghetti al Pomodoro",
+      "sell": 140,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "wheat",
+          "qty": 2
+        },
+        {
+          "slug": "tomato",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "sweet-soymilk",
+      "name": "Sweet Soymilk",
+      "sell": 95,
+      "station": 3,
+      "energy": 4,
+      "recipePrice": 600,
+      "ingredients": [
+        {
+          "slug": "soybeans",
+          "qty": 1
+        },
+        {
+          "slug": "sugar",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "chili-soup",
+      "name": "Chili Soup",
+      "sell": 130,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "chili-pepper",
+          "qty": 1
+        },
+        {
+          "slug": "tomato",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "mushroom-stir-fry",
+      "name": "Mushroom Stir-fry",
+      "sell": 70,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "enoki-mushrooms",
+          "qty": 1
+        },
+        {
+          "slug": "radish",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "nasi-lemak",
+      "name": "Nasi Lemak",
+      "sell": 105,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "rice",
+          "qty": 1
+        },
+        {
+          "slug": "coconut",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "pineapple-skewer",
+      "name": "Pineapple Skewer",
+      "sell": 135,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "pineapple",
+          "qty": 2
+        }
+      ]
+    },
+    {
+      "slug": "rice-pudding",
+      "name": "Rice Pudding",
+      "sell": 105,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "rice",
+          "qty": 1
+        },
+        {
+          "slug": "milk",
+          "qty": 1
+        },
+        {
+          "slug": "sugar",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "blooming-onion",
+      "name": "Blooming Onion",
+      "sell": 100,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "onion",
+          "qty": 1
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        },
+        {
+          "slug": "cooking-oil",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "cauli-bites",
+      "name": "Cauli Bites",
+      "sell": 120,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "cauliflower",
+          "qty": 2
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "cinnamon-tea",
+      "name": "Cinnamon Tea",
+      "sell": 20,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "cinnamon",
+          "qty": 2
+        },
+        {
+          "slug": "sugar",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "eggplant-tagine",
+      "name": "Eggplant Tagine",
+      "sell": 65,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "eggplant",
+          "qty": 1
+        },
+        {
+          "slug": "cumin",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "mushroom-milanese",
+      "name": "Mushroom Milanese",
+      "sell": 60,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "oyster-mushrooms",
+          "qty": 1
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "fruit-smoothie",
+      "name": "Fruit Smoothie",
+      "sell": 20,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "wild-berries",
+          "qty": 2
+        },
+        {
+          "slug": "sugar",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "garden-salad",
+      "name": "Garden Salad",
+      "sell": 70,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 1
+        },
+        {
+          "slug": "lettuce",
+          "qty": 1
+        },
+        {
+          "slug": "carrot",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "tamago-sushi",
+      "name": "Tamago Sushi",
+      "sell": 95,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": 300,
+      "ingredients": [
+        {
+          "slug": "rice",
+          "qty": 1
+        },
+        {
+          "slug": "egg",
+          "qty": 1
+        },
+        {
+          "slug": "algae",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "tropical-smoothie",
+      "name": "Tropical Smoothie",
+      "sell": 80,
+      "station": 3,
+      "energy": 3,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "pineapple",
+          "qty": 1
+        },
+        {
+          "slug": "coconut",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "banana-curry",
+      "name": "Banana Curry",
+      "sell": 65,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "banana",
+          "qty": 1
+        },
+        {
+          "slug": "coconut",
+          "qty": 1
+        },
+        {
+          "slug": "onion",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "chocolate-cake",
+      "name": "Chocolate Cake",
+      "sell": 65,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "cacao",
+          "qty": 1
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "croissant",
+      "name": "Croissant",
+      "sell": 65,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "milk",
+          "qty": 1
+        },
+        {
+          "slug": "wheat",
+          "qty": 1
+        },
+        {
+          "slug": "egg",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "eggnog",
+      "name": "Eggnog",
+      "sell": 20,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "egg",
+          "qty": 1
+        },
+        {
+          "slug": "milk",
+          "qty": 1
+        },
+        {
+          "slug": "cinnamon",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "flaxseed-bread",
+      "name": "Flaxseed Bread",
+      "sell": 30,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "flax",
+          "qty": 1
+        },
+        {
+          "slug": "banana",
+          "qty": 2
+        }
+      ]
+    },
+    {
+      "slug": "fruit-salad",
+      "name": "Fruit Salad",
+      "sell": 50,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "watermelon",
+          "qty": 1
+        },
+        {
+          "slug": "wild-berries",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "pancakes",
+      "name": "Pancakes",
+      "sell": 70,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "wheat",
+          "qty": 1
+        },
+        {
+          "slug": "sugar",
+          "qty": 1
+        },
+        {
+          "slug": "egg",
+          "qty": 2
+        }
+      ]
+    },
+    {
+      "slug": "sweet-porridge",
+      "name": "Sweet Porridge",
+      "sell": 25,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "banana",
+          "qty": 1
+        },
+        {
+          "slug": "cinnamon",
+          "qty": 1
+        },
+        {
+          "slug": "honey",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "creamy-summer-soup",
+      "name": "Creamy Summer Soup",
+      "sell": 55,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "carrot",
+          "qty": 1
+        },
+        {
+          "slug": "tomato",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "fries",
+      "name": "Fries",
+      "sell": 65,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "potato",
+          "qty": 2
+        },
+        {
+          "slug": "cooking-oil",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "mush-chips",
+      "name": "Mush & Chips",
+      "sell": 35,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "portobello-mushrooms",
+          "qty": 1
+        },
+        {
+          "slug": "potato",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "potato-soup",
+      "name": "Potato Soup",
+      "sell": 65,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "potato",
+          "qty": 2
+        },
+        {
+          "slug": "milk",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "power-smoothie",
+      "name": "Power Smoothie",
+      "sell": 40,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 1
+        },
+        {
+          "slug": "wild-berries",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "veggie-egg-scramble",
+      "name": "Veggie Egg Scramble",
+      "sell": 55,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 1
+        },
+        {
+          "slug": "lettuce",
+          "qty": 1
+        },
+        {
+          "slug": "egg",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "banana-pudding",
+      "name": "Banana Pudding",
+      "sell": 30,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "banana",
+          "qty": 2
+        },
+        {
+          "slug": "milk",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "chocolate-porridge",
+      "name": "Chocolate Porridge",
+      "sell": 25,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "cacao",
+          "qty": 1
+        },
+        {
+          "slug": "coconut",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "coconut-water",
+      "name": "Coconut Water",
+      "sell": 30,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "coconut",
+          "qty": 2
+        },
+        {
+          "slug": "sugar",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "hot-chocolate",
+      "name": "Hot Chocolate",
+      "sell": 30,
+      "station": 2,
+      "energy": 2,
+      "recipePrice": 100,
+      "ingredients": [
+        {
+          "slug": "cacao",
+          "qty": 2
+        },
+        {
+          "slug": "milk",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "carrot-cake",
+      "name": "Carrot Cake",
+      "sell": 25,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "carrot",
+          "qty": 1
+        },
+        {
+          "slug": "butter",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "carrot-soup",
+      "name": "Carrot Soup",
+      "sell": 35,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "carrot",
+          "qty": 2
+        }
+      ]
+    },
+    {
+      "slug": "chef-salad",
+      "name": "Chef Salad",
+      "sell": 20,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "lettuce",
+          "qty": 1
+        },
+        {
+          "slug": "egg",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "fried-eggs",
+      "name": "Fried Eggs",
+      "sell": 20,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "egg",
+          "qty": 2
+        },
+        {
+          "slug": "cooking-oil",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "scrambled-eggs",
+      "name": "Scrambled Eggs",
+      "sell": 25,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "egg",
+          "qty": 3
+        },
+        {
+          "slug": "butter",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "shakshuka",
+      "name": "Shakshuka",
+      "sell": 40,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": 40,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 1
+        },
+        {
+          "slug": "egg",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "slug": "tomato-soup",
+      "name": "Tomato Soup",
+      "sell": 65,
+      "station": 1,
+      "energy": 2,
+      "recipePrice": null,
+      "ingredients": [
+        {
+          "slug": "tomato",
+          "qty": 2
+        }
+      ]
+    }
+  ]
+}
