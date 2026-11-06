@@ -3,6 +3,7 @@ import { fmtTime } from '../core/format';
 import type { ComputedIngredient } from '../core/types';
 import { PlannerStore, RecipeRow } from '../state/planner.store';
 import { AssetPipe, CODEX_ITEMS, Dew, ExternalLink, Icon, N0Pipe, N1Pipe, QtyControl, TimePipe } from '../ui/shared';
+import { FillButton } from './fill-button';
 
 export const TYPE_LABEL: Record<string, string> = {
   crop: 'Culture',
@@ -30,7 +31,7 @@ export function ingTitle(i: ComputedIngredient, growTime: (base: number) => numb
 @Component({
   selector: 'app-recipe-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, N1Pipe, Dew, Icon, QtyControl, ExternalLink],
+  imports: [AssetPipe, TimePipe, N0Pipe, N1Pipe, Dew, Icon, QtyControl, ExternalLink, FillButton],
   host: {
     class: 'panel rcard',
     '[class.inplan]': 'n() > 0',
@@ -104,10 +105,12 @@ export function ingTitle(i: ComputedIngredient, growTime: (base: number) => numb
       @if (n()) {
         <span class="lbl">Je cuisine</span>
         <app-qty [slug]="rec.slug" />
+        <app-fill-btn [r]="rec" [compact]="true" />
         <span class="tot"><img src="assets/energy-cost.webp" alt="" />{{ T.energy }} énergie</span>
         <button type="button" class="iconbtn" (click)="store.setQty(rec.slug, 0)" title="Retirer du plan" aria-label="Retirer du plan"><app-icon name="x" /></button>
       } @else {
         <button type="button" class="addbtn" (click)="store.setQty(rec.slug, 1)"><app-icon name="plus" />Ajouter au plan</button>
+        <app-fill-btn [r]="rec" />
         <span class="tot">valeurs pour 1 plat</span>
       }
     </div>

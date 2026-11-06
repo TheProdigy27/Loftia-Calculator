@@ -84,6 +84,20 @@ export function createEngine(data: LoftiaData) {
 
   const isTree = (c: Crop) => c.seedPrice === null;
 
+  /** Parcelles prises par un plat : une graine par unité de culture ; les arbres n'en prennent pas */
+  const plotSeedsMap = new Map<string, number>(
+    data.recipes.map((r) => [
+      r.slug,
+      r.ingredients.reduce((a, i) => {
+        const c = cropMap.get(i.slug);
+        return c && !isTree(c) ? a + i.qty : a;
+      }, 0),
+    ]),
+  );
+  function plotSeeds(slug: string): number {
+    return plotSeedsMap.get(slug) ?? 0;
+  }
+
   function ingredient(slug: string): Ingredient {
     const c = cropMap.get(slug);
     if (c) {
@@ -281,6 +295,7 @@ export function createEngine(data: LoftiaData) {
     cropMap,
     recipeMap,
     usedIn,
+    plotSeeds,
     ingredient,
     growTime,
     waterTime,

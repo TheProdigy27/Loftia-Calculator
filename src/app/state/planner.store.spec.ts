@@ -69,6 +69,26 @@ describe('PlannerStore', () => {
     expect(store.opt().plots).toBe(0);
   });
 
+  it('remplir mes parcelles : maximum de plats par plantation, reste du plan déduit', () => {
+    // Tomato Basil Soup : 2 tomates + 1 basilic = 3 parcelles par plat
+    expect(store.plotFill('tomato-basil-soup')).toEqual({ per: 3, plots: 0, others: 0, free: 0, n: 0, left: 0 });
+    expect(store.plotFill('mushroom-soup')).toBeNull(); // aucune graine
+    store.patch({ plotsLimited: true, plots: 7 });
+    expect(store.fillPlots('tomato-basil-soup')).toBe(true);
+    expect(store.qty('tomato-basil-soup')).toBe(2);
+    expect(store.plotFill('tomato-basil-soup')).toMatchObject({ free: 7, n: 2, left: 1 });
+    expect(store.planResult().seeds).toBe(6);
+    // Omurice ×2 (riz + tomate) prend 4 parcelles : il en reste 3 pour la soupe → 1 plat
+    store.setQty('omurice', 2);
+    store.fillPlots('tomato-basil-soup');
+    expect(store.qty('tomato-basil-soup')).toBe(1);
+    expect(store.plotFill('tomato-basil-soup')).toMatchObject({ others: 4, free: 3, n: 1, left: 0 });
+    // Plus assez de place : rien ne change
+    store.setQty('omurice', 6);
+    expect(store.fillPlots('tomato-basil-soup')).toBe(false);
+    expect(store.qty('tomato-basil-soup')).toBe(1);
+  });
+
   it('en-tête de tableau : tri bouton → inverse → retour au bouton', () => {
     store.setView('table');
     store.sortByColumn('profit');

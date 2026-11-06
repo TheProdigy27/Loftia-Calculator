@@ -49,7 +49,12 @@ import { AssetPipe, Dew, Icon, N0Pipe, PlotsControl, QtyControl, TimePipe } from
         </section>
 
         <section class="psec">
-          <h3>Parcelles<small>{{ P.seeds }} graine{{ P.seeds > 1 ? 's' : '' }} à planter</small></h3>
+          <h3>Parcelles<small>{{ P.seeds }} graine{{ P.seeds > 1 ? 's' : '' }} à planter{{ store.plots() ? ' · ' + P.seeds + ' / ' + store.plots() + ' parcelles' : '' }}</small></h3>
+          @if (store.plots() && P.seeds > store.plots()) {
+            <p class="pnote" style="margin: 0 0 6px">Plus de graines que de parcelles : il faudra plusieurs plantations (déjà compté dans le temps).</p>
+          } @else if (store.plots() && P.seeds < store.plots()) {
+            <p class="pnote" style="margin: 0 0 6px">{{ store.plots() - P.seeds }} parcelle{{ store.plots() - P.seeds > 1 ? 's' : '' }} libre{{ store.plots() - P.seeds > 1 ? 's' : '' }} : le bouton <b>Remplir mes parcelles</b> d'une recette les occupe au maximum.</p>
+          }
           <div class="panel prow2" style="justify-content: space-between; flex-wrap: wrap">
             <span class="pnote">Temps calculé avec {{ plotsText() }}{{ treeNote() }}</span>
             <app-plots />

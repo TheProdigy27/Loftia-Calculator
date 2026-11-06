@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, viewC
 import { ComputedRecipe } from '../core/types';
 import { BaseSort, IncKey, OptKey, PlannerStore, SORTS, isBaseSort } from '../state/planner.store';
 import { AssetPipe, CODEX_ITEMS, Dew, ExternalLink, Icon, N0Pipe, N1Pipe, QtyControl, TimePipe } from '../ui/shared';
+import { FillButton } from './fill-button';
 import { RecipeCard, ingTitle } from './recipe-card';
 
 interface Highlight {
@@ -13,7 +14,7 @@ interface Highlight {
 @Component({
   selector: 'app-recipes-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, N1Pipe, Dew, Icon, QtyControl, ExternalLink, RecipeCard],
+  imports: [AssetPipe, TimePipe, N0Pipe, N1Pipe, Dew, Icon, QtyControl, ExternalLink, RecipeCard, FillButton],
   template: `
     @let st = s();
     <div class="sortbar">
@@ -164,11 +165,14 @@ interface Highlight {
                   <td class="num" [class.hot]="b === 'dpe'">{{ r.dpe | n1 }}</td>
                   <td class="num" [class.hot]="b === 'station'">{{ r.station }}</td>
                   <td>
-                    @if (st.plan[r.slug]) {
-                      <app-qty [slug]="r.slug" [sm]="true" />
-                    } @else {
-                      <button type="button" class="addbtn sm" (click)="store.setQty(r.slug, 1)"><app-icon name="plus" />Plan</button>
-                    }
+                    <span class="plancell">
+                      @if (st.plan[r.slug]) {
+                        <app-qty [slug]="r.slug" [sm]="true" />
+                      } @else {
+                        <button type="button" class="addbtn sm" (click)="store.setQty(r.slug, 1)"><app-icon name="plus" />Plan</button>
+                      }
+                      <app-fill-btn [r]="r" [compact]="true" />
+                    </span>
                   </td>
                 </tr>
               }

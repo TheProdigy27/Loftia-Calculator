@@ -42,6 +42,22 @@ export interface RecipeRow extends ComputedRecipe {
   pareto: boolean;
 }
 
+/** « Remplir mes parcelles » pour une recette */
+export interface PlotFill {
+  /** Parcelles prises par un plat */
+  per: number;
+  /** Parcelles réglées (0 = illimitées : rien à remplir) */
+  plots: number;
+  /** Parcelles déjà prises par les autres recettes du plan */
+  others: number;
+  /** Parcelles disponibles pour cette recette */
+  free: number;
+  /** Nombre maximal de plats qui tiennent dans une plantation */
+  n: number;
+  /** Parcelles qui resteront vides */
+  left: number;
+}
+
 const STORE_KEY = 'loftia-planner-v1';
 
 export const DEFAULT_STATE: PlannerState = {
@@ -193,6 +209,30 @@ export class PlannerStore {
 
   clearPlan(): void {
     this.patch({ plan: {} });
+  }
+
+  /**
+   * Combien de plats de cette recette tiennent dans les parcelles libres (une graine par parcelle,
+   * une seule plantation ; les parcelles prises par le reste du plan sont déduites).
+   * null si la recette ne demande aucune graine.
+   */
+  plotFill(slug: string): PlotFill | null {
+    const per = this.engine.plotSeeds(slug);
+    if (!per) return null;
+    const plots = this.plots();
+    if (!plots) return { per, plots: 0, others: 0, free: 0, n: 0, left: 0 };
+    const others = this.planResult().seeds - per * this.qty(slug);
+    const free = Math.max(0, plots - others);
+    const n = Math.floor(free / per);
+    return { per, plots, others, free, n, left: free - n * per };
+  }
+
+  /** Règle la recette sur le maximum de plats qui remplit les parcelles libres */
+  fillPlots(slug: string): boolean {
+    const f = this.plotFill(slug);
+    if (!f || f.n < 1) return false;
+    this.setQty(slug, f.n);
+    return true;
   }
 
   // ---------- réglages ----------

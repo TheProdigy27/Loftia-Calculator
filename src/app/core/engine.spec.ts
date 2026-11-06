@@ -32,6 +32,15 @@ describe('données embarquées', () => {
   });
 });
 
+describe('parcelles par plat', () => {
+  it('une graine par unité de culture, les arbres et le reste ne comptent pas', () => {
+    expect(engine.plotSeeds('tomato-basil-soup')).toBe(3);
+    expect(engine.plotSeeds('nasi-lemak')).toBe(1); // riz + noix de coco (arbre)
+    expect(engine.plotSeeds('mushroom-soup')).toBe(0);
+    expect(engine.plotSeeds('inconnue')).toBe(0);
+  });
+});
+
 describe('moteur — équivalence avec le prototype', () => {
   const all = combos();
   const recipes = fixture.recipes as Record<string, (number | null)[][]>;
