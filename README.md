@@ -13,7 +13,8 @@ Le cadrage complet est dans [Loftia Planner — Plan d'application.md](Loftia%20
 | Cultures : graines, Dew/h, recettes liées | fait |
 | Réglages joueur : niveaux, parcelles, prix, station, sauvegarde locale | fait (`localStorage` de la WebView) |
 | Données embarquées | fait : `src/data/loftia-data.json` (instantané du 6 novembre 2026) |
-| Installeur Windows | fait : `npm run dist` produit un `-setup.exe` NSIS de 5,3 Mo (bootstrapper WebView2 inclus) |
+| Installeur Windows | fait : `npm run dist` produit un `-setup.exe` NSIS de 6,4 Mo (bootstrapper WebView2 inclus) |
+| Mise à jour automatique | fait : vérifie les releases GitHub au démarrage puis toutes les 6 h, bouton ↻ dans la barre du haut, installation et redémarrage en un clic |
 
 Raccourcis : `Ctrl+F` ou `/` pour chercher, `Échap` pour effacer, `+` et `−` sur une carte sélectionnée (Tab).
 
@@ -25,7 +26,7 @@ Prérequis : Node 24, et pour l'appli de bureau [Rust](https://rustup.rs) avec l
 npm install
 npm start          # version web sur http://localhost:4200
 npm run dev        # appli de bureau (Tauri)
-npm run dist       # installeur : src-tauri/target/release/bundle/nsis/*-setup.exe
+npm run dist       # installeur signé : src-tauri/target/release/bundle/nsis/*-setup.exe (voir « Publier une version »)
 npm test           # moteur, plan et état
 ```
 
@@ -33,7 +34,7 @@ npm test           # moteur, plan et état
 
 ```
 src/app/core/        moteur de calcul pur (port TypeScript de engine.js) + texte du plan
-src/app/state/       état de l'appli en signals, sauvegarde locale
+src/app/state/       état de l'appli en signals, sauvegarde locale, mises à jour
 src/app/features/    écrans : réglages, recettes, cultures, plan
 src/app/ui/          pipes, icônes, contrôles partagés
 src/data/            data.json embarqué (schemaVersion 1)
@@ -58,4 +59,16 @@ Les données sont compilées par le [Loftia Codex](https://loftiacodex.com), un 
 
 ## Publier une version
 
-Changer `version` dans `src-tauri/tauri.conf.json`, puis pousser un tag `v0.1.0` : le workflow `release.yml` construit le `-setup.exe` et crée un brouillon de release GitHub. Sans certificat de signature, SmartScreen avertit au premier lancement (« Informations complémentaires » puis « Exécuter quand même »).
+Tout se fait depuis ce PC (la clé de signature n'en sort jamais) :
+
+```sh
+npm run release:version -- 0.2.0   # change la version partout, puis commit + push
+npm run release                    # tests, build signée, release GitHub en brouillon
+npm run release -- --publish       # ... ou publiée directement
+npm run release -- --notes "Nouveautés : ..."
+npm run release -- --dry-run       # build + latest.json sans rien envoyer
+```
+
+Le script refuse de publier s'il reste des changements non commités ou si le commit n'est pas sur GitHub, pour que l'installeur corresponde au code du dépôt. Il envoie le `-setup.exe` et `latest.json` ; les applis installées lisent `releases/latest/download/latest.json`, donc elles ne voient une version qu'une fois la release publiée (pas en brouillon). Sans certificat de signature Windows, SmartScreen avertit au premier lancement (« Informations complémentaires » puis « Exécuter quand même »).
+
+Signature des mises à jour : clé publique dans `src-tauri/tauri.conf.json` (`plugins.updater.pubkey`), clé privée dans `~/.tauri/loftia-planner.key` et son mot de passe dans `~/.tauri/loftia-planner.key.password`, hors du dépôt. Pour un simple `npm run dist`, exporter `TAURI_SIGNING_PRIVATE_KEY` et `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` avant (sinon la build échoue à l'étape de signature). **Sauvegarder la clé privée** : si elle est perdue, les applis déjà installées ne pourront plus se mettre à jour toutes seules (il faudra réinstaller à la main une version signée avec une nouvelle clé).

@@ -1,6 +1,6 @@
 # Loftia Planner — Plan d'application
 
-Nov 6, 2026 · @Hugo
+6 novembre 2026
 
 ## Vision
 
@@ -47,7 +47,7 @@ Recommandation : **Tauri 2 + Angular**. Tu réutilises le prototype web, ton Ang
 - **Moteur de calcul** : `engine.js` porté en TypeScript, une librairie pure sans dépendance, testée sur les 61 recettes.
 - **Côté Rust (commandes Tauri)** : synchro avec le Codex (`reqwest` + `scraper`), cache des icônes, minuteurs.
 - **Plugins Tauri 2** : notification, global-shortcut, store (sauvegarde), updater, window-state, single-instance, plus l'icône de zone de notification (`tray-icon`) incluse dans le cœur ([liste des plugins](https://v2.tauri.app/release/notification/v2.0.0/)).
-- **Distribution** : installeur NSIS `-setup.exe` (ou `.msi` via WiX, construit uniquement sous Windows), compilé par GitHub Actions et publié sur GitHub Releases, que l'updater interroge.
+- **Distribution** : installeur NSIS `-setup.exe` (ou `.msi` via WiX, construit uniquement sous Windows), compilé et signé en local (`npm run release`) et publié sur GitHub Releases avec `latest.json`, que l'updater interroge.
 - **Signature** : sans certificat de signature de code, Windows SmartScreen avertit au premier lancement. Ça passe pour des amis ; un certificat devient utile pour une diffusion large.
 
 ## Données

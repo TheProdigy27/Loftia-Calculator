@@ -29,6 +29,7 @@
   "bundle": {
     "active": true,
     "targets": ["nsis"],
+    "createUpdaterArtifacts": true,
     "publisher": "TheProdigy27",
     "shortDescription": "Planificateur de cuisine et de cultures pour Loftia",
     "category": "Utility",
@@ -45,6 +46,17 @@
         "installMode": "currentUser",
         "languages": ["French", "English"],
         "displayLanguageSelector": false
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDIwNEM3N0M3OUIxNkJCREMKUldUY3V4YWJ4M2RNSUhPTlI0ZGIxaktoa1Y4QklWMVYyK241UXdqakRsSkJIem94S0VDc2dZY2gK",
+      "endpoints": [
+        "https://github.com/TheProdigy27/Loftia-Calculator/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
       }
     }
   }

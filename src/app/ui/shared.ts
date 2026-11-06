@@ -42,7 +42,7 @@ export class PluralPipe implements PipeTransform {
   }
 }
 
-export type IconName = 'minus' | 'plus' | 'x' | 'clock' | 'search' | 'copy' | 'caret';
+export type IconName = 'minus' | 'plus' | 'x' | 'clock' | 'search' | 'copy' | 'caret' | 'refresh';
 
 @Component({
   selector: 'app-icon',
@@ -67,6 +67,9 @@ export type IconName = 'minus' | 'plus' | 'x' | 'clock' | 'search' | 'copy' | 'c
       }
       @case ('copy') {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h8" /></svg>
+      }
+      @case ('refresh') {
+        <svg [class]="cls()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 5v4h4" /><path d="M4 13a8 8 0 0 0 14.6 4.5M20 19v-4h-4" /></svg>
       }
       @case ('caret') {
         <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>

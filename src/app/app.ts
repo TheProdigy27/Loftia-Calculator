@@ -3,7 +3,9 @@ import { Controls } from './features/controls';
 import { CropsView } from './features/crops-view';
 import { PlanPanel } from './features/plan-panel';
 import { RecipesView } from './features/recipes-view';
+import { UpdateBanner, UpdateButton } from './features/updater';
 import { PlannerStore, Tab } from './state/planner.store';
+import { UpdaterStore } from './state/updater.store';
 import { AssetPipe, Dew, ExternalLink, Icon, N0Pipe, TimePipe } from './ui/shared';
 
 /** Largeur à partir de laquelle « Mon plan » reste ouvert à droite des recettes */
@@ -12,7 +14,7 @@ const WIDE_QUERY = '(min-width: 1180px)';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, ExternalLink, Controls, RecipesView, CropsView, PlanPanel],
+  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, ExternalLink, Controls, RecipesView, CropsView, PlanPanel, UpdateButton, UpdateBanner],
   templateUrl: './app.html',
 })
 export class App {
@@ -54,6 +56,7 @@ export class App {
   );
 
   constructor() {
+    inject(UpdaterStore).start();
     if (typeof matchMedia !== 'undefined') {
       const mq = matchMedia(WIDE_QUERY);
       this.wide.set(mq.matches);

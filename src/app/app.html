@@ -12,6 +12,7 @@
       </a>
     }
   </nav>
+  <app-update-button />
   @if (!wide()) {
     <button type="button" class="planbtn" aria-haspopup="dialog" (click)="drawerOpen.set(true)">
       <img src="assets/cooking-station.webp" alt="" /><span class="lbl">Mon plan</span>
@@ -19,6 +20,7 @@
     </button>
   }
 </header>
+<app-update-banner />
 
 <div class="layout" [class.with-plan]="wide()">
   <main class="wrap">

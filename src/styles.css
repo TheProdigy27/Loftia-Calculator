@@ -350,3 +350,29 @@ app-plan-panel{display:flex; flex-direction:column; flex:1; min-height:0}
   .layout.with-plan .controls{grid-template-columns:1.05fr 1fr .9fr}
   .layout.with-plan .controls .tipcol{grid-column:auto}
 }
+
+/* ---------- Mise à jour (bouton ↻ et bandeau) ---------- */
+.updbtn{display:flex; align-items:center; gap:6px; position:relative; border:1px solid var(--border); background:var(--panel); border-radius:999px; padding:6px 11px 6px 8px; color:var(--muted); font-weight:800; font-size:12.5px}
+.updbtn svg{width:17px; height:17px}
+.updbtn:hover:not(:disabled){border-color:var(--teal); color:var(--teal)}
+.updbtn:disabled{cursor:default}
+.updbtn.spin svg, .updbar svg.spin{animation:upd-spin .9s linear infinite}
+.updbtn.has{border-color:var(--here); color:var(--here-ink)}
+.updbtn.has::after{content:""; position:absolute; top:-2px; right:-2px; width:10px; height:10px; border-radius:50%; background:var(--here); border:2px solid var(--panel)}
+@keyframes upd-spin{to{transform:rotate(360deg)}}
+
+.updbar{position:fixed; top:75px; right:18px; z-index:45; width:min(440px, calc(100vw - 24px)); display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px;
+  background:var(--panel); border:1px solid var(--teal); border-radius:var(--radius-lg); padding:12px 14px; box-shadow:0 8px 24px rgba(29,60,50,.18), var(--shadow-raised); font-size:13.5px; color:var(--text-strong)}
+.updbar.err{border-color:#d9a08f}
+.updbar p{margin:0; flex:1 1 220px; display:flex; flex-wrap:wrap; align-items:center; gap:4px}
+.updbar p b{color:var(--teal-deep)}
+.updbar p svg{width:16px; height:16px; color:var(--teal)}
+.updbar a{font-weight:800}
+.updbar .acts{display:flex; gap:8px; margin-left:auto}
+.updbar .btn{padding:7px 12px}
+.updbar .close{align-self:flex-start}
+.updbar .prog{flex-basis:100%; height:7px; border-radius:999px; background:var(--panel-2); overflow:hidden}
+.updbar .prog span{display:block; height:100%; background:var(--teal); border-radius:inherit; transition:width .2s}
+.updbar .prog.indet span{animation:upd-pulse 1.2s ease-in-out infinite alternate}
+@keyframes upd-pulse{from{opacity:.35}to{opacity:1}}
+@media (max-width:760px){ .updbtn .ver{display:none} .updbtn{padding:6px} .updbar{top:auto; bottom:76px; right:12px} }
