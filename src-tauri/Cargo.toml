@@ -1,6 +1,6 @@
 [package]
 name = "loftia-planner"
-version = "0.3.0"
+version = "0.4.0"
 description = "Loftia Planner : planificateur de cuisine et de cultures pour Loftia"
 authors = ["TheProdigy27"]
 license = ""
