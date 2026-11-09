@@ -18,6 +18,12 @@ import type {
   Recipe,
 } from './types';
 
+/**
+ * Drip Irrigator (objet de maison, Project Station) : « keep its tiles hydrated for 150% longer ».
+ * Même formulation que Deep Hydration (« +15% longer » = × 1,15), donc +150 % ; les deux bonus s'additionnent.
+ */
+export const DRIP_IRRIGATOR_BONUS = 1.5;
+
 export function perkSum(list: readonly Perk[], lvl: number): number {
   return list.filter((p) => lvl >= p.level).reduce((a, p) => a + p.value, 0);
 }
@@ -124,9 +130,15 @@ export function createEngine(data: LoftiaData) {
     return Math.round(base * (1 - perkSum(data.perks.farming.faster, farmLvl)));
   }
 
-  /** Deep Hydration : l'arrosage tient plus longtemps */
-  function waterTime(base: number, farmLvl: number): number {
-    return Math.round(base * (1 + perkSum(data.perks.farming.water, farmLvl)));
+  /** Deep Hydration (et Drip Irrigator) : l'arrosage tient plus longtemps */
+  function waterTime(base: number, farmLvl: number, drip = false): number {
+    return Math.round(base * (1 + perkSum(data.perks.farming.water, farmLvl) + (drip ? DRIP_IRRIGATOR_BONUS : 0)));
+  }
+
+  /** Durée d'un arrosage d'une culture (0 si inconnue) ; le Drip Irrigator va sur les garden beds, pas sur les arbres */
+  function cropWater(slug: string, opt: Pick<CalcOptions, 'farmLvl' | 'drip'>): number {
+    const c = cropMap.get(slug);
+    return c ? waterTime(c.water, opt.farmLvl, !!opt.drip && !isTree(c)) : 0;
   }
 
   /** n = nombre de fois que la recette est faite (les champs racine restent « par plat », tot = totaux pour n) */
@@ -268,7 +280,7 @@ export function createEngine(data: LoftiaData) {
     };
   }
 
-  function computeCrop(slug: string, opt: Pick<CalcOptions, 'farmLvl'>): ComputedCrop {
+  function computeCrop(slug: string, opt: Pick<CalcOptions, 'farmLvl' | 'drip'>): ComputedCrop {
     const c = cropMap.get(slug);
     if (!c) throw new Error(`Culture inconnue : ${slug}`);
     const dbl = perkSum(data.perks.farming.double, opt.farmLvl);
@@ -282,7 +294,7 @@ export function createEngine(data: LoftiaData) {
       seedName: c.seedName,
       tree: isTree(c),
       grow,
-      water: waterTime(c.water, opt.farmLvl),
+      water: cropWater(slug, opt),
       cost: c.seedPrice,
       value,
       profit,
@@ -299,6 +311,7 @@ export function createEngine(data: LoftiaData) {
     ingredient,
     growTime,
     waterTime,
+    cropWater,
     computeRecipe,
     computePlan,
     computeCrop,

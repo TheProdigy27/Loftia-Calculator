@@ -11,7 +11,7 @@ export type Tab = 'recettes' | 'cultures';
 export type View = 'cards' | 'table';
 export type BaseSort = 'profit' | 'time' | 'dph' | 'dpe';
 export type IncKey = 'nocrop' | 'gather' | 'shop' | 'craft';
-export type OptKey = 'treesReady' | 'paretoOnly' | 'planOnly';
+export type OptKey = 'treesReady' | 'paretoOnly' | 'planOnly' | 'drip';
 export type CropSortKey = 'seedName' | 'name' | 'grow' | 'water' | 'cost' | 'value' | 'profit' | 'dph' | 'uses';
 
 export interface PlannerState {
@@ -26,6 +26,8 @@ export interface PlannerState {
   planOnly: boolean;
   inc: Record<IncKey, boolean>;
   treesReady: boolean;
+  /** Drip Irrigator sur les garden beds : l'arrosage tient plus longtemps */
+  drip: boolean;
   paretoOnly: boolean;
   /** Tri : clé de SORTS, clé de colonne du tableau, ou « profit_ » (tri inverse d'une colonne déjà triée par un bouton) */
   sort: string;
@@ -72,6 +74,7 @@ export const DEFAULT_STATE: PlannerState = {
   planOnly: false,
   inc: { nocrop: false, gather: true, shop: true, craft: true },
   treesReady: false,
+  drip: false,
   paretoOnly: false,
   sort: 'profit',
   dir: -1,
@@ -179,6 +182,7 @@ export class PlannerStore {
       mode: s.mode,
       plots: s.plotsLimited ? s.plots : 0,
       treesReady: s.treesReady,
+      drip: s.drip,
     };
   });
 

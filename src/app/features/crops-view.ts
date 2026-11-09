@@ -96,9 +96,9 @@ export class CropsView {
   }
 
   protected readonly rows = computed(() => {
-    const { farmLvl, cropSort: k, cropDir: d } = this.store.state();
+    const { farmLvl, drip, cropSort: k, cropDir: d } = this.store.state();
     const q = this.store.q().trim().toLowerCase();
-    let rows = this.store.data.crops.map((c) => this.store.engine.computeCrop(c.slug, { farmLvl }));
+    let rows = this.store.data.crops.map((c) => this.store.engine.computeCrop(c.slug, { farmLvl, drip }));
     if (q) rows = rows.filter((r) => r.name.toLowerCase().includes(q) || r.seedName.toLowerCase().includes(q));
     const val = (r: ComputedCrop) => (k === 'uses' ? this.usedIn(r.slug).length : r[k]);
     return rows.sort((a, b) => {

@@ -93,6 +93,17 @@ describe('moteur — règles', () => {
     expect(perkSum(faster, 20)).toBeCloseTo(0.1);
   });
 
+  it('Drip Irrigator : arrosage +150 %, en plus de Deep Hydration, pas sur les arbres', () => {
+    const water = (slug: string, farmLvl: number, drip?: boolean) => engine.computeCrop(slug, { farmLvl, drip }).water;
+    expect(water('carrot', 1)).toBe(10);
+    expect(water('carrot', 1, true)).toBe(25);
+    expect(water('carrot', 15)).toBe(14); // Deep Hydration I + II : +40 %
+    expect(water('carrot', 15, true)).toBe(29);
+    expect(water('banana', 1, true)).toBe(360);
+    expect(engine.cropWater('carrot', { farmLvl: 1, drip: true })).toBe(25);
+    expect(engine.cropWater('inconnue', { farmLvl: 1, drip: true })).toBe(0);
+  });
+
   it('Ingredient Saver retire 5 % du premier ingrédient dès le niveau 2', () => {
     const r = engine.recipeMap.get('tomato-basil-soup')!; // 2 tomates (15) + 1 basilic (40)
     expect(engine.computeRecipe(r, base).cost).toBe(70);

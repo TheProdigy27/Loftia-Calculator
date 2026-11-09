@@ -84,6 +84,11 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
         <span class="clabel">Parcelles</span>
         <app-plots />
       </div>
+      <div class="ctl" title="Drip Irrigator installé sur tes garden beds : l'arrosage tient 150 % plus longtemps, en plus de Deep Hydration (pas sur les arbres)">
+        <button type="button" class="chip" [attr.aria-pressed]="s().drip" (click)="store.toggleOpt('drip')">
+          <span class="box"></span><img [src]="'drip-irrigator' | asset" alt="" />Drip Irrigator
+        </button>
+      </div>
       <div class="ctl" title="Station de cuisine : recettes jusqu'à ce niveau">
         <span class="clabel"><img src="assets/cooking-station.webp" alt="" />Station</span>
         <div class="seg">
@@ -101,7 +106,7 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
         <span class="tip-tag">Tip</span>
         @if (s().tab === 'cultures') {
           <p><b>Dew / h</b> = (vente − prix de la graine) ÷ temps de pousse, comme sur le Codex. Ton niveau de Farming applique Rapid Growth (pousse plus courte), Fruitful Harvest (valeur moyenne) et Deep Hydration (arrosage plus long).</p>
-          <p><b>Arrosage</b> = combien de temps un arrosage tient. Les arbres n'ont pas de prix de graine relevé sur le Codex.</p>
+          <p><b>Arrosage</b> = combien de temps un arrosage tient{{ s().drip ? ', Drip Irrigator compris (+150 %, pas sur les arbres)' : '' }}. Le minuteur du plan s'en sert pour te rappeler d'arroser. Les arbres n'ont pas de prix de graine relevé sur le Codex.</p>
           <div class="ex">Clique sur les plats d'une ligne pour voir les recettes qui utilisent cette culture.</div>
         } @else {
           @if (s().mode === 'cash') {

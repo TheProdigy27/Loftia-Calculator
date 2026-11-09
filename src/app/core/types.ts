@@ -75,6 +75,8 @@ export interface CalcOptions {
   /** Nombre de parcelles ; 0 = illimitées */
   plots: number;
   treesReady: boolean;
+  /** Drip Irrigator installé sur les garden beds (absent = non) */
+  drip?: boolean;
 }
 
 /** Plan de cuisine : slug de recette → nombre de plats */

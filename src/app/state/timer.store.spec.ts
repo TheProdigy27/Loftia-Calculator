@@ -80,6 +80,15 @@ describe('TimerStore', () => {
     expect(timer.preview().total).toBe(90);
   });
 
+  it('Drip Irrigator : l’arrosage tient plus longtemps, moins de rappels', () => {
+    const { planner, timer } = setup();
+    planner.setQty(SOUP, 1);
+    expect(timer.preview().events.map((e) => e.at)).toEqual([5, 10, 15, 20, 30]);
+    planner.toggleOpt('drip'); // tomate : arrosage 12,5 → 13 min, basilic : 25 min
+    expect(timer.preview().events.map((e) => e.at)).toEqual([13, 15, 25, 30]);
+    expect(timer.preview().total).toBe(30);
+  });
+
   it('appli fermée puis rouverte : les rappels manqués arrivent en une notification', () => {
     let { planner, timer } = setup();
     planner.setQty(SOUP, 1);
