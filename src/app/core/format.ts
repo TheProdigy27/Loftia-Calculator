@@ -1,9 +1,12 @@
-/** 95 → « 1h 35m », 60 → « 1h », 0 → « 0m » */
+/** Minutes → « 1h 35m », 60 → « 1h », 7.5 → « 7m 30s », 0 → « 0m » (arrondi à la seconde) */
 export function fmtTime(m: number | null | undefined): string {
-  if (!m) return '0m';
-  const h = Math.floor(m / 60);
-  const r = m % 60;
-  return h ? `${h}h${r ? ` ${r}m` : ''}` : `${r}m`;
+  const t = Math.round((m || 0) * 60);
+  if (!t) return '0m';
+  const h = Math.floor(t / 3600);
+  const min = Math.floor((t % 3600) / 60);
+  const s = t % 60;
+  const parts = [h && `${h}h`, (min || (h && s)) && `${min}m`, s && `${s}s`];
+  return parts.filter(Boolean).join(' ');
 }
 
 /** Entier formaté en français (espace insécable pour les milliers) */

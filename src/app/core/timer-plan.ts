@@ -52,7 +52,7 @@ function byKindThenName(a: TimerStep, b: TimerStep): number {
 /**
  * Calendrier du plan.
  * @param plots parcelles (0 = illimitées)
- * @param waterOf durée d'un arrosage (min) d'une culture, bonus Deep Hydration compris
+ * @param waterOf durée d'un arrosage (min, à la seconde près) d'une culture, Deep Hydration et Drip Irrigator compris
  */
 export function buildSchedule(
   plan: ComputedPlan,
@@ -102,7 +102,8 @@ export function buildSchedule(
     if (start > 0) add(start, 'plant', u, qty);
     else if (!u.tree) addStep(first, { kind: 'plant', slug: u.slug, name: u.name, qty });
     const end = start + u.grow;
-    if (u.water > 0) for (let w = start + u.water; w < end; w += u.water) add(w, 'water', u, qty);
+    // k × water plutôt que des additions successives : pas de dérive avec des durées à la seconde (7,5 min)
+    if (u.water > 0) for (let k = 1; start + k * u.water < end; k++) add(start + k * u.water, 'water', u, qty);
     add(end, 'harvest', u, qty);
     total = Math.max(total, end);
   }

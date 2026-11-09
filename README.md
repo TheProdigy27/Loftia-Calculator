@@ -11,7 +11,7 @@ Le cadrage complet est dans [Loftia Planner — Plan d'application.md](Loftia%20
 | Recettes et tris (rentables, rapides, Dew/h, Dew par énergie), filtres, recherche, cartes ou tableau | fait |
 | Plan de cuisine × n : quantités, liste de courses groupée, coût, profit, temps, énergie, copie de la liste | fait, panneau fixe à droite sur grand écran |
 | Cultures : graines, Dew/h, recettes liées | fait |
-| Réglages joueur : niveaux, parcelles, prix, station, Drip Irrigator (arrosage +150 %), sauvegarde locale | fait (`localStorage` de la WebView) |
+| Réglages joueur : niveaux, parcelles, prix, station, Drip Irrigator (arrosage × 1,5), sauvegarde locale | fait (`localStorage` de la WebView) |
 | Données embarquées | fait : `src/data/loftia-data.json` (instantané du 6 novembre 2026) |
 | Installeur Windows | fait : `npm run dist` produit un `-setup.exe` NSIS de 6,4 Mo (bootstrapper WebView2 inclus) |
 | Mise à jour automatique | fait : vérifie les releases GitHub au démarrage puis toutes les 6 h, bouton ↻ dans la barre du haut, installation et redémarrage en un clic |

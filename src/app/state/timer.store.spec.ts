@@ -84,9 +84,11 @@ describe('TimerStore', () => {
     const { planner, timer } = setup();
     planner.setQty(SOUP, 1);
     expect(timer.preview().events.map((e) => e.at)).toEqual([5, 10, 15, 20, 30]);
-    planner.toggleOpt('drip'); // tomate : arrosage 12,5 → 13 min, basilic : 25 min
-    expect(timer.preview().events.map((e) => e.at)).toEqual([13, 15, 25, 30]);
-    expect(timer.preview().total).toBe(30);
+    planner.toggleOpt('drip'); // tomate : arrosage 7 min 30, basilic : 15 min
+    const pv = timer.preview();
+    expect(pv.events.map((e) => e.at)).toEqual([7.5, 15, 30]);
+    expect(steps(pv.events[1].steps)).toEqual(['harvest tomato×2', 'water basil×1']);
+    expect(pv.total).toBe(30);
   });
 
   it('appli fermée puis rouverte : les rappels manqués arrivent en une notification', () => {

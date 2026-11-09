@@ -1,6 +1,7 @@
 import rawData from '../../data/loftia-data.json';
 import fixture from './engine.fixture.json';
 import { createEngine, makespan, paretoSet, perkSum } from './engine';
+import { fmtTime } from './format';
 import { planText } from './plan-text';
 import type { CalcOptions, LoftiaData, PlanQuantities, PriceMode } from './types';
 
@@ -62,7 +63,10 @@ describe('moteur — équivalence avec le prototype', () => {
     for (const c of data.crops) {
       for (let lvl = 1; lvl <= 20; lvl++) {
         const x = engine.computeCrop(c.slug, { farmLvl: lvl });
-        expect([x.grow, x.water, x.value, x.profit, r3(x.dph)], `${c.slug} lv${lvl}`).toEqual(crops[c.slug][lvl - 1]);
+        const [grow, water, ...rest] = crops[c.slug][lvl - 1];
+        expect([x.grow, x.value, x.profit, r3(x.dph)], `${c.slug} lv${lvl}`).toEqual([grow, ...rest]);
+        // Arrosage : le prototype arrondit à la minute, l'appli à la seconde
+        expect(Math.abs(x.water - (water as number)), `${c.slug} lv${lvl} arrosage`).toBeLessThanOrEqual(0.5);
       }
     }
   });
@@ -93,15 +97,26 @@ describe('moteur — règles', () => {
     expect(perkSum(faster, 20)).toBeCloseTo(0.1);
   });
 
-  it('Drip Irrigator : arrosage +150 %, en plus de Deep Hydration, pas sur les arbres', () => {
+  it('Drip Irrigator : arrosage × 1,5, en plus de Deep Hydration, pas sur les arbres', () => {
     const water = (slug: string, farmLvl: number, drip?: boolean) => engine.computeCrop(slug, { farmLvl, drip }).water;
-    expect(water('carrot', 1)).toBe(10);
-    expect(water('carrot', 1, true)).toBe(25);
+    expect(water('tomato', 1)).toBe(5);
+    expect(water('tomato', 1, true)).toBe(7.5); // relevé en jeu : 7 min 30
+    expect(water('tomato', 5)).toBe(5.75); // Deep Hydration I : 5 min 45
     expect(water('carrot', 15)).toBe(14); // Deep Hydration I + II : +40 %
-    expect(water('carrot', 15, true)).toBe(29);
+    expect(water('carrot', 15, true)).toBe(19);
     expect(water('banana', 1, true)).toBe(360);
-    expect(engine.cropWater('carrot', { farmLvl: 1, drip: true })).toBe(25);
+    expect(engine.cropWater('tomato', { farmLvl: 1, drip: true })).toBe(7.5);
     expect(engine.cropWater('inconnue', { farmLvl: 1, drip: true })).toBe(0);
+  });
+
+  it('durées affichées à la seconde près', () => {
+    expect(fmtTime(0)).toBe('0m');
+    expect(fmtTime(95)).toBe('1h 35m');
+    expect(fmtTime(60)).toBe('1h');
+    expect(fmtTime(7.5)).toBe('7m 30s');
+    expect(fmtTime(0.25)).toBe('15s');
+    expect(fmtTime(60.5)).toBe('1h 0m 30s');
+    expect(fmtTime(103.5)).toBe('1h 43m 30s');
   });
 
   it('Ingredient Saver retire 5 % du premier ingrédient dès le niveau 2', () => {

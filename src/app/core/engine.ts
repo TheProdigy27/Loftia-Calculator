@@ -20,9 +20,10 @@ import type {
 
 /**
  * Drip Irrigator (objet de maison, Project Station) : « keep its tiles hydrated for 150% longer ».
- * Même formulation que Deep Hydration (« +15% longer » = × 1,15), donc +150 % ; les deux bonus s'additionnent.
+ * En jeu, c'est 150 % de la durée de base : une tomate passe de 5 min à 7 min 30, soit +50 %.
+ * Cumul avec Deep Hydration non vérifié en jeu : les deux bonus sont additionnés.
  */
-export const DRIP_IRRIGATOR_BONUS = 1.5;
+export const DRIP_IRRIGATOR_BONUS = 0.5;
 
 export function perkSum(list: readonly Perk[], lvl: number): number {
   return list.filter((p) => lvl >= p.level).reduce((a, p) => a + p.value, 0);
@@ -130,9 +131,13 @@ export function createEngine(data: LoftiaData) {
     return Math.round(base * (1 - perkSum(data.perks.farming.faster, farmLvl)));
   }
 
-  /** Deep Hydration (et Drip Irrigator) : l'arrosage tient plus longtemps */
+  /**
+   * Deep Hydration (et Drip Irrigator) : l'arrosage tient plus longtemps.
+   * Arrondi à la seconde (le jeu affiche 7 min 30) ; le prototype arrondissait à la minute.
+   */
   function waterTime(base: number, farmLvl: number, drip = false): number {
-    return Math.round(base * (1 + perkSum(data.perks.farming.water, farmLvl) + (drip ? DRIP_IRRIGATOR_BONUS : 0)));
+    const k = 1 + perkSum(data.perks.farming.water, farmLvl) + (drip ? DRIP_IRRIGATOR_BONUS : 0);
+    return Math.round(base * k * 60) / 60;
   }
 
   /** Durée d'un arrosage d'une culture (0 si inconnue) ; le Drip Irrigator va sur les garden beds, pas sur les arbres */
