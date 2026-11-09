@@ -97,13 +97,14 @@ describe('moteur — règles', () => {
     expect(perkSum(faster, 20)).toBeCloseTo(0.1);
   });
 
-  it('Drip Irrigator : arrosage × 1,5, en plus de Deep Hydration, pas sur les arbres', () => {
+  it('Drip Irrigator : arrosage × 1,5 de la base, Deep Hydration ne s’y ajoute pas, pas sur les arbres', () => {
     const water = (slug: string, farmLvl: number, drip?: boolean) => engine.computeCrop(slug, { farmLvl, drip }).water;
     expect(water('tomato', 1)).toBe(5);
-    expect(water('tomato', 1, true)).toBe(7.5); // relevé en jeu : 7 min 30
     expect(water('tomato', 5)).toBe(5.75); // Deep Hydration I : 5 min 45
+    expect(water('tomato', 5, true)).toBe(7.5); // relevé en jeu (Deep Hydration I + Drip) : 7 min 30
+    expect(water('tomato', 1, true)).toBe(7.5);
     expect(water('carrot', 15)).toBe(14); // Deep Hydration I + II : +40 %
-    expect(water('carrot', 15, true)).toBe(19);
+    expect(water('carrot', 15, true)).toBe(15);
     expect(water('banana', 1, true)).toBe(360);
     expect(engine.cropWater('tomato', { farmLvl: 1, drip: true })).toBe(7.5);
     expect(engine.cropWater('inconnue', { farmLvl: 1, drip: true })).toBe(0);

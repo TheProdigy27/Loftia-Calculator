@@ -20,10 +20,10 @@ import type {
 
 /**
  * Drip Irrigator (objet de maison, Project Station) : « keep its tiles hydrated for 150% longer ».
- * En jeu, c'est 150 % de la durée de base : une tomate passe de 5 min à 7 min 30, soit +50 %.
- * Cumul avec Deep Hydration non vérifié en jeu : les deux bonus sont additionnés.
+ * Relevé en jeu : avec Deep Hydration I et le Drip, une tomate (5 min de base) tient 7 min 30.
+ * C'est donc 150 % de la durée de base, et Deep Hydration ne s'y ajoute pas.
  */
-export const DRIP_IRRIGATOR_BONUS = 0.5;
+export const DRIP_IRRIGATOR_FACTOR = 1.5;
 
 export function perkSum(list: readonly Perk[], lvl: number): number {
   return list.filter((p) => lvl >= p.level).reduce((a, p) => a + p.value, 0);
@@ -132,11 +132,11 @@ export function createEngine(data: LoftiaData) {
   }
 
   /**
-   * Deep Hydration (et Drip Irrigator) : l'arrosage tient plus longtemps.
+   * Deep Hydration, ou Drip Irrigator qui le remplace : l'arrosage tient plus longtemps.
    * Arrondi à la seconde (le jeu affiche 7 min 30) ; le prototype arrondissait à la minute.
    */
   function waterTime(base: number, farmLvl: number, drip = false): number {
-    const k = 1 + perkSum(data.perks.farming.water, farmLvl) + (drip ? DRIP_IRRIGATOR_BONUS : 0);
+    const k = drip ? DRIP_IRRIGATOR_FACTOR : 1 + perkSum(data.perks.farming.water, farmLvl);
     return Math.round(base * k * 60) / 60;
   }
 
