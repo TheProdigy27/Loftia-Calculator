@@ -160,7 +160,7 @@ export class QtyControl {
       <span class="qty-ctl sm">
         <button type="button" (click)="store.setPlots(s().plots - 1)" aria-label="Une parcelle de moins"><app-icon name="minus" /></button>
         <input
-          type="number" min="1" max="99" inputmode="numeric" aria-label="Nombre de parcelles"
+          type="number" min="1" max="999" inputmode="numeric" aria-label="Nombre de parcelles"
           [value]="s().plots"
           (change)="store.setPlots($any($event.target).value)"
           (keydown.enter)="$any($event.target).blur()"

@@ -246,7 +246,7 @@ export class PlannerStore {
 
   setPlots(n: number | string): void {
     const v = Math.round(Number(n));
-    this.patch({ plots: Number.isFinite(v) && v >= 1 ? Math.min(99, v) : 1 });
+    this.patch({ plots: Number.isFinite(v) && v >= 1 ? Math.min(999, v) : 1 });
   }
 
   setView(view: View): void {

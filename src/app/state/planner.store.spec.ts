@@ -59,12 +59,14 @@ describe('PlannerStore', () => {
     expect(store.planCount()).toBe(4);
   });
 
-  it('parcelles limitées : bornes 1 à 99, passées au moteur', () => {
+  it('parcelles limitées : bornes 1 à 999, passées au moteur', () => {
     store.patch({ plotsLimited: true });
     store.setPlots(0);
     expect(store.opt().plots).toBe(1);
     store.setPlots(150);
-    expect(store.opt().plots).toBe(99);
+    expect(store.opt().plots).toBe(150);
+    store.setPlots(1500);
+    expect(store.opt().plots).toBe(999);
     store.patch({ plotsLimited: false });
     expect(store.opt().plots).toBe(0);
   });
