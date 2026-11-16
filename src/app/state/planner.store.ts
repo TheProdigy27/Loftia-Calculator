@@ -4,30 +4,29 @@
  */
 import { Injectable, computed, effect, signal } from '@angular/core';
 import rawData from '../../data/loftia-data.json';
+import rawGarden from '../../data/loftia-garden.json';
 import { createEngine, paretoSet } from '../core/engine';
-import type { CalcOptions, ComputedRecipe, LoftiaData, PlanQuantities, PriceMode } from '../core/types';
+import { gardenSlots, normalizeCounts, stepCount, type GardenCountKey, type GardenCounts, type GardenData } from '../core/garden';
+import type { CalcOptions, ComputedRecipe, LoftiaData, PlanQuantities } from '../core/types';
 
 export type Tab = 'recettes' | 'cultures';
 export type View = 'cards' | 'table';
 export type BaseSort = 'profit' | 'time' | 'dph' | 'dpe';
 export type IncKey = 'nocrop' | 'gather' | 'shop' | 'craft';
-export type OptKey = 'treesReady' | 'paretoOnly' | 'planOnly' | 'drip';
+export type OptKey = 'treesReady' | 'paretoOnly' | 'planOnly';
 export type CropSortKey = 'seedName' | 'name' | 'grow' | 'water' | 'cost' | 'value' | 'profit' | 'dph' | 'uses';
 
 export interface PlannerState {
   tab: Tab;
   cookLvl: number;
   farmLvl: number;
-  mode: PriceMode;
-  plotsLimited: boolean;
-  plots: number;
+  /** Jardin : garden beds 3x3, Hydrofarms et Drip Irrigators possédés (ce sont les parcelles) */
+  garden: GardenCounts;
   station: number;
   plan: PlanQuantities;
   planOnly: boolean;
   inc: Record<IncKey, boolean>;
   treesReady: boolean;
-  /** Drip Irrigator sur les garden beds : l'arrosage tient plus longtemps */
-  drip: boolean;
   paretoOnly: boolean;
   /** Tri : clé de SORTS, clé de colonne du tableau, ou « profit_ » (tri inverse d'une colonne déjà triée par un bouton) */
   sort: string;
@@ -48,7 +47,7 @@ export interface RecipeRow extends ComputedRecipe {
 export interface PlotFill {
   /** Parcelles prises par un plat */
   per: number;
-  /** Parcelles réglées (0 = illimitées : rien à remplir) */
+  /** Parcelles du jardin */
   plots: number;
   /** Parcelles déjà prises par les autres recettes du plan */
   others: number;
@@ -61,20 +60,20 @@ export interface PlotFill {
 }
 
 const STORE_KEY = 'loftia-planner-v1';
+const TABS: readonly Tab[] = ['recettes', 'cultures'];
+
+export const GARDEN = rawGarden as GardenData;
 
 export const DEFAULT_STATE: PlannerState = {
   tab: 'recettes',
   cookLvl: 1,
   farmLvl: 1,
-  mode: 'cash',
-  plotsLimited: false,
-  plots: 6,
+  garden: normalizeCounts(null, GARDEN),
   station: 3,
   plan: {},
   planOnly: false,
   inc: { nocrop: false, gather: true, shop: true, craft: true },
   treesReady: false,
-  drip: false,
   paretoOnly: false,
   sort: 'profit',
   dir: -1,
@@ -132,6 +131,10 @@ export function loadState(storage: Pick<Storage, 'getItem'> | null): PlannerStat
       }
     }
     if (!state.plan || typeof state.plan !== 'object') state.plan = {};
+    if (!TABS.includes(state.tab)) state.tab = 'recettes';
+    state.garden = normalizeCounts(state.garden, GARDEN);
+    // Ancienne case « Drip Irrigator » (avant le jardin) : tous les lits étaient équipés
+    if (saved && !('garden' in saved) && (saved as { drip?: unknown }).drip === true) state.garden.irrigator = state.garden.bed;
     if (!isBaseSort(state.sort) && !(state.sort in TABLE_KEYS)) state.sort = 'profit';
     if (state.view === 'cards' && !isBaseSort(state.sort)) state.sort = 'profit';
   } catch {
@@ -173,21 +176,31 @@ export class PlannerStore {
     this.state.update((s) => ({ ...s, ...p }));
   }
 
+  // ---------- jardin ----------
+  readonly gardenData = GARDEN;
+
+  /** Parcelles du jardin : lits irrigués, autres lits, Hydrofarms */
+  readonly slots = computed(() => gardenSlots(this.state().garden, GARDEN));
+
+  /** Nombre total de parcelles (une graine par parcelle) */
+  readonly plots = computed(() => this.slots().reduce((a, g) => a + g.n, 0));
+
+  /** + / − sur les lits, les Hydrofarms ou les Drip Irrigators (bornés, irrigateurs ≤ lits, jamais vide) */
+  stepGarden(key: GardenCountKey, d: number): void {
+    this.state.update((s) => ({ ...s, garden: stepCount(s.garden, key, d, GARDEN) }));
+  }
+
   // ---------- options de calcul ----------
   readonly opt = computed<CalcOptions>(() => {
     const s = this.state();
     return {
       cookLvl: s.cookLvl,
       farmLvl: s.farmLvl,
-      mode: s.mode,
-      plots: s.plotsLimited ? s.plots : 0,
+      plots: this.slots(),
       treesReady: s.treesReady,
-      drip: s.drip,
+      nutrient: GARDEN.nutrient,
     };
   });
-
-  /** Nombre de parcelles retenu (0 = illimitées) */
-  readonly plots = computed(() => this.opt().plots);
 
   // ---------- plan ----------
   readonly planResult = computed(() => this.engine.computePlan(this.state().plan, this.opt()));
@@ -224,7 +237,6 @@ export class PlannerStore {
     const per = this.engine.plotSeeds(slug);
     if (!per) return null;
     const plots = this.plots();
-    if (!plots) return { per, plots: 0, others: 0, free: 0, n: 0, left: 0 };
     const others = this.planResult().seeds - per * this.qty(slug);
     const free = Math.max(0, plots - others);
     const n = Math.floor(free / per);
@@ -242,11 +254,6 @@ export class PlannerStore {
   // ---------- réglages ----------
   stepLevel(k: 'cookLvl' | 'farmLvl', d: number): void {
     this.state.update((s) => ({ ...s, [k]: Math.max(1, Math.min(20, s[k] + d)) }));
-  }
-
-  setPlots(n: number | string): void {
-    const v = Math.round(Number(n));
-    this.patch({ plots: Number.isFinite(v) && v >= 1 ? Math.min(999, v) : 1 });
   }
 
   setView(view: View): void {

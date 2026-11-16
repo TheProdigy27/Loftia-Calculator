@@ -82,7 +82,10 @@ export function ingTitle(i: ComputedIngredient, growTime: (base: number) => numb
       <div class="totcap">Total pour {{ n() }} plat{{ n() > 1 ? 's' : '' }}</div>
     }
     <div class="metrics">
-      <div class="m" [attr.title]="per(rec.cost + ' Dew')"><div class="l">Coût</div><div class="v"><app-dew />{{ T.cost }}{{ rec.approx ? '≈' : '' }}</div></div>
+      <div class="m" [attr.title]="costTitle()">
+        <div class="l">Coût</div>
+        <div class="v"><app-dew />{{ T.cost }}{{ rec.approx ? '≈' : '' }}@if (T.nutrient) {<img class="nsol" src="assets/nutrient-solution.webp" alt="dont Nutrient Solution" />}</div>
+      </div>
       <div class="m" [attr.title]="per(rec.value + ' Dew')"><div class="l">Vente</div><div class="v"><app-dew />{{ T.value }}</div></div>
       <div class="m" [class.hot]="s === 'profit'" [attr.title]="per(rec.profit + ' Dew')">
         <div class="l">Profit</div><div class="v" [class.neg]="T.profit < 0"><app-dew />{{ T.profit }}</div>
@@ -135,6 +138,19 @@ export class RecipeCard {
 
   protected per(v: string): string | null {
     return this.n() ? `Par plat : ${v}` : null;
+  }
+
+  /** Infobulle du coût : par plat, et la Nutrient Solution des graines qui tombent en Hydrofarm */
+  protected costTitle(): string | null {
+    const { cost, tot } = this.r();
+    const { cost: bottle, charges } = this.store.gardenData.nutrient;
+    const parts = [
+      this.per(cost + ' Dew'),
+      tot.nutrient
+        ? `dont ${tot.nutrient} Dew de Nutrient Solution (graines plantées en Hydrofarm, ${bottle / charges} Dew la charge ; le plan compte des flacons entiers)`
+        : null,
+    ];
+    return parts.filter(Boolean).join(' · ') || null;
   }
 
   /** + et − sur la carte sélectionnée */

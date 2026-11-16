@@ -17,20 +17,19 @@ export const LEVELS = Array.from({ length: 20 }, (_, k) => k + 1);
 export const PLOTS = [0, 2];
 const N = 4; // totaux vérifiés pour 4 plats
 
-// recipes[slug][i] / crops[slug][i] : i parcourt les combinaisons dans l'ordre des boucles ci-dessous
+// recipes[slug][i] / crops[slug][i] : i parcourt les combinaisons dans l'ordre des boucles ci-dessous.
+// L'appli ne garde que le prix payé (« ce que ça coûte ») : mode 'cash' pour le prototype.
 const recipes = {};
 const crops = {};
 for (const lvl of LEVELS) {
-  for (const mode of ['cash', 'regular']) {
-    for (const plots of PLOTS) {
-      for (const treesReady of [false, true]) {
-        const opt = { cookLvl: lvl, farmLvl: lvl, mode, plots, treesReady };
-        for (const r of D.recipes) {
-          const c = C.computeRecipe(r, opt, N);
-          (recipes[c.slug] ||= []).push([
-            c.cost, c.value, c.profit, c.time, r3(c.dph), r3(c.dpe), c.approx ? 1 : 0, c.tot.time, r3(c.tot.dph),
-          ]);
-        }
+  for (const plots of PLOTS) {
+    for (const treesReady of [false, true]) {
+      const opt = { cookLvl: lvl, farmLvl: lvl, mode: 'cash', plots, treesReady };
+      for (const r of D.recipes) {
+        const c = C.computeRecipe(r, opt, N);
+        (recipes[c.slug] ||= []).push([
+          c.cost, c.value, c.profit, c.time, r3(c.dph), r3(c.dpe), c.approx ? 1 : 0, c.tot.time, r3(c.tot.dph),
+        ]);
       }
     }
   }
@@ -51,7 +50,7 @@ for (let k = 0; k < 40; k++) {
   const opt = {
     cookLvl: 1 + Math.floor(rnd() * 20),
     farmLvl: 1 + Math.floor(rnd() * 20),
-    mode: rnd() < 0.5 ? 'cash' : 'regular',
+    mode: 'cash',
     plots: [0, 1, 3, 6][Math.floor(rnd() * 4)],
     treesReady: rnd() < 0.3,
   };
@@ -74,7 +73,7 @@ const pareto = Object.keys(C.paretoSet(def)).sort();
 writeFileSync(
   new URL('src/app/core/engine.fixture.json', root),
   JSON.stringify({
-    order: 'lvl 1..20 > mode cash,regular > plots 0,2 > treesReady false,true ; tot pour n = 4',
+    order: 'lvl 1..20 > plots 0,2 > treesReady false,true ; prix payé ; tot pour n = 4',
     n: N,
     recipes,
     crops,

@@ -16,6 +16,8 @@ import type {
   PlanIngredient,
   PlanQuantities,
   Recipe,
+  SlotGroup,
+  WaterOptions,
 } from './types';
 
 /**
@@ -33,28 +35,92 @@ export function activePerks(list: readonly Perk[], lvl: number): Perk[] {
   return list.filter((p) => lvl >= p.level);
 }
 
-/** Temps pour faire pousser des unités sur `plots` parcelles (0 = illimitées) — répartition LPT */
-export function makespan(durations: readonly number[], plots: number): number {
-  const d = durations.filter((x) => x > 0);
-  if (!d.length) return 0;
-  const max = Math.max(...d);
-  if (!plots || plots >= d.length) return max;
-  d.sort((a, b) => b - a);
-  const loads = new Array<number>(plots).fill(0);
-  for (const x of d) {
-    let mi = 0;
-    for (let k = 1; k < loads.length; k++) if (loads[k] < loads[mi]) mi = k;
-    loads[mi] += x;
+/** Parcelles du jardin : un nombre = autant de parcelles de garden bed, 0 = illimitées */
+export function slotsOf(plots: number | readonly SlotGroup[]): readonly SlotGroup[] {
+  if (typeof plots === 'number') return plots > 0 ? [{ n: plots }] : [];
+  return plots.filter((g) => g.n > 0);
+}
+
+/** Une graine à faire pousser : pousse en garden bed (Rapid Growth compris) et en Hydrofarm (sans) */
+export interface GrowUnit {
+  slug: string;
+  bed: number;
+  hydro: number;
+  /** Charges de Nutrient Solution qu'elle boit si elle pousse en Hydrofarm */
+  charges?: number;
+}
+
+export interface Placement<U extends GrowUnit> {
+  u: U;
+  /** Rang du groupe de parcelles dans `slots` (-1 : parcelles illimitées, en garden bed) */
+  group: number;
+  start: number;
+  end: number;
+}
+
+/**
+ * Répartit les graines sur les parcelles (LPT) : la plus longue d'abord, sur la parcelle où elle sera prête
+ * le plus tôt ; à égalité, le premier groupe de `slots` puis la première parcelle. Sans parcelle : tout est
+ * planté tout de suite. Avec un seul type de parcelle, c'est la répartition du prototype (makespan).
+ */
+export function placeUnits<U extends GrowUnit>(units: readonly U[], slots: readonly SlotGroup[]): Placement<U>[] {
+  const sorted = units
+    .filter((u) => u.bed > 0)
+    .sort((a, b) => b.bed - a.bed || b.hydro - a.hydro || a.slug.localeCompare(b.slug));
+  if (!slots.length) return sorted.map((u) => ({ u, group: -1, start: 0, end: u.bed }));
+  const loads = slots.map((g) => new Array<number>(g.n).fill(0));
+  return sorted.map((u) => {
+    let group = 0;
+    let slot = 0;
+    let end = Infinity;
+    slots.forEach((g, gi) => {
+      const L = loads[gi];
+      let mi = 0;
+      for (let k = 1; k < L.length; k++) if (L[k] < L[mi]) mi = k;
+      const e = L[mi] + (g.hydro ? u.hydro : u.bed);
+      if (e < end) [group, slot, end] = [gi, mi, e];
+    });
+    const start = loads[group][slot];
+    loads[group][slot] = end;
+    return { u, group, start, end };
+  });
+}
+
+/**
+ * Plantation des graines sur les parcelles : fin de la dernière pousse (au moins `tree`, le cycle des arbres)
+ * et charges de Nutrient Solution bues par celles qui tombent en Hydrofarm.
+ */
+function growAll(units: readonly GrowUnit[], slots: readonly SlotGroup[], tree = 0): { time: number; charges: number } {
+  let time = tree;
+  let charges = 0;
+  for (const p of placeUnits(units, slots)) {
+    time = Math.max(time, p.end);
+    if (slots[p.group]?.hydro) charges += p.u.charges ?? 0;
   }
-  return Math.max(...loads);
+  return { time, charges };
+}
+
+/** Temps pour faire pousser des unités sur `plots` parcelles de garden bed (0 = illimitées) — répartition LPT */
+export function makespan(durations: readonly number[], plots: number): number {
+  return growAll(
+    durations.map((d) => ({ slug: '', bed: d, hydro: d })),
+    slotsOf(plots),
+  ).time;
 }
 
 /** Unités à faire pousser : une graine par ingrédient de culture ; les arbres ne prennent pas de parcelle */
-function growUnits(ings: readonly ComputedIngredient[], n: number): { units: number[]; tree: number } {
-  const units: number[] = [];
+function growUnits(
+  ings: readonly ComputedIngredient[],
+  n: number,
+  chargesOf: (slug: string) => number,
+): { units: GrowUnit[]; tree: number } {
+  const units: GrowUnit[] = [];
   let tree = 0;
   for (const i of ings) {
-    if (i.type === 'crop') for (let k = 0; k < i.q * n; k++) units.push(i.t);
+    if (i.type === 'crop') {
+      const charges = chargesOf(i.slug);
+      for (let k = 0; k < i.q * n; k++) units.push({ slug: i.slug, bed: i.t, hydro: i.grow, charges });
+    }
     if (i.type === 'tree') tree = Math.max(tree, i.t);
   }
   return { units, tree };
@@ -141,15 +207,38 @@ export function createEngine(data: LoftiaData) {
   }
 
   /** Durée d'un arrosage d'une culture (0 si inconnue) ; le Drip Irrigator va sur les garden beds, pas sur les arbres */
-  function cropWater(slug: string, opt: Pick<CalcOptions, 'farmLvl' | 'drip'>): number {
+  function cropWater(slug: string, opt: WaterOptions): number {
     const c = cropMap.get(slug);
     return c ? waterTime(c.water, opt.farmLvl, !!opt.drip && !isTree(c)) : 0;
+  }
+
+  /**
+   * Charges de Nutrient Solution d'une plante en Hydrofarm, comme le Codex (economy/garden) : une charge par
+   * arrosage, soit ⌈pousse ÷ arrosage⌉ — pousse sans Rapid Growth, arrosage avec Deep Hydration.
+   */
+  function hydroCharges(slug: string, farmLvl: number): number {
+    const c = cropMap.get(slug);
+    if (!c || !c.water) return 0;
+    return Math.ceil(c.grow / (c.water * (1 + perkSum(data.perks.farming.water, farmLvl))) - 1e-9);
+  }
+
+  /**
+   * Part de Nutrient Solution d'une recette : `charges` charges au prix de la charge (0 si elle n'est pas comptée).
+   * Sert à comparer les recettes ; le plan, lui, paie des flacons entiers (nutrientBottles).
+   */
+  function nutrientCost(charges: number, opt: CalcOptions): number {
+    return opt.nutrient ? Math.round((charges * opt.nutrient.cost) / opt.nutrient.charges) : 0;
+  }
+
+  /** Flacons entiers de Nutrient Solution à acheter pour `charges` charges (0 si elle n'est pas comptée) */
+  function nutrientBottles(charges: number, opt: CalcOptions): number {
+    return opt.nutrient ? Math.ceil(charges / opt.nutrient.charges) : 0;
   }
 
   /** n = nombre de fois que la recette est faite (les champs racine restent « par plat », tot = totaux pour n) */
   function computeRecipe(r: Recipe, opt: CalcOptions, n = 1): ComputedRecipe {
     n = n || 1;
-    const plots = opt.plots || 0;
+    const slots = slotsOf(opt.plots);
     const refund = perkSum(data.perks.cooking.refund, opt.cookLvl);
     const dbl = perkSum(data.perks.cooking.double, opt.cookLvl);
     const value = Math.round(r.sell * (1 + dbl));
@@ -157,7 +246,7 @@ export function createEngine(data: LoftiaData) {
     let approx = false;
     const ings: ComputedIngredient[] = r.ingredients.map(({ slug, qty }) => {
       const i = ingredient(slug);
-      let p = opt.mode === 'cash' ? i.cash : i.real;
+      let p = i.cash;
       let ingApprox = false;
       if (p === null || p === undefined) {
         p = i.real;
@@ -173,13 +262,25 @@ export function createEngine(data: LoftiaData) {
 
     const raw = ings.reduce((a, i) => a + i.q * i.unit, 0);
     // Ingredient Saver : chance de récupérer le premier ingrédient (comportement du Codex)
-    const cost = Math.round(raw - refund * ings[0].unit);
-    const profit = value - cost;
+    const ingCost = Math.round(raw - refund * ings[0].unit);
 
-    const g1 = growUnits(ings, 1);
-    const time = Math.max(makespan(g1.units, plots), g1.tree);
-    const gn = n === 1 ? g1 : growUnits(ings, n);
-    const timeN = n === 1 ? time : Math.max(makespan(gn.units, plots), gn.tree);
+    // Pousse et Nutrient Solution : selon où tombent les graines (un plat seul, puis les n plats)
+    const chargesOf = (slug: string) => hydroCharges(slug, opt.farmLvl);
+    const g1 = growUnits(ings, 1, chargesOf);
+    const p1 = growAll(g1.units, slots, g1.tree);
+    let pn = p1;
+    if (n > 1) {
+      const gn = growUnits(ings, n, chargesOf);
+      pn = growAll(gn.units, slots, gn.tree);
+    }
+    const time = p1.time;
+    const timeN = pn.time;
+    const nutrient = nutrientCost(p1.charges, opt);
+    const nutrientN = nutrientCost(pn.charges, opt);
+    const cost = ingCost + nutrient;
+    const profit = value - cost;
+    const costN = ingCost * n + nutrientN;
+    const profitN = value * n - costN;
     const maxT = ings.reduce((a, i) => Math.max(a, i.t), 0);
     for (const i of ings) i.crit = maxT > 0 && i.t === maxT;
 
@@ -195,6 +296,7 @@ export function createEngine(data: LoftiaData) {
       ings,
       value,
       cost,
+      nutrient,
       profit,
       approx,
       time,
@@ -207,25 +309,28 @@ export function createEngine(data: LoftiaData) {
       hasCraft: types.has('craft'),
       tot: {
         n,
-        cost: cost * n,
+        cost: costN,
+        nutrient: nutrientN,
         value: value * n,
-        profit: profit * n,
+        profit: profitN,
         energy: r.energy * n,
         time: timeN,
-        dph: timeN > 0 ? (profit * n) / (timeN / 60) : null,
+        dph: timeN > 0 ? profitN / (timeN / 60) : null,
       },
     };
   }
 
   /** Plan : { slug: n } → totaux et liste d'ingrédients agrégée */
   function computePlan(plan: PlanQuantities, opt: CalcOptions): ComputedPlan {
-    const plots = opt.plots || 0;
+    const slots = slotsOf(opt.plots);
     const refund = perkSum(data.perks.cooking.refund, opt.cookLvl);
     const entries: ComputedRecipe[] = [];
     const ingMap = new Map<string, PlanIngredient>();
-    let units: number[] = [];
+    const chargesOf = (slug: string) => hydroCharges(slug, opt.farmLvl);
+    let units: GrowUnit[] = [];
     let tree = 0;
-    let cost = 0;
+    /** Ingrédients seuls (Ingredient Saver inclus) : la Nutrient Solution dépend du plan entier */
+    let ingCost = 0;
     let value = 0;
     let energy = 0;
     let raw = 0;
@@ -237,11 +342,11 @@ export function createEngine(data: LoftiaData) {
       if (!n || !r) continue;
       const e = computeRecipe(r, opt, n);
       entries.push(e);
-      cost += e.tot.cost;
+      ingCost += e.tot.cost - e.tot.nutrient;
       value += e.tot.value;
       energy += e.tot.energy;
       if (e.approx) approx = true;
-      const g = growUnits(e.ings, n);
+      const g = growUnits(e.ings, n, chargesOf);
       units = units.concat(g.units);
       tree = Math.max(tree, g.tree);
       for (const i of e.ings) {
@@ -263,15 +368,23 @@ export function createEngine(data: LoftiaData) {
       if (i.type === 'crop') seedCost += i.qty * (i.cash ?? 0);
       if (i.type === 'shop') shopCost += i.qty * (i.cash ?? 0);
     }
-    const time = Math.max(makespan(units, plots), tree);
+    const { time, charges } = growAll(units, slots, tree);
+    // Ce qu'on achète vraiment : des flacons entiers (180 charges → 8 flacons, 800 Dew, 20 charges de reste)
+    const bottles = nutrientBottles(charges, opt);
+    const nutrient = opt.nutrient ? bottles * opt.nutrient.cost : 0;
+    const cost = ingCost + nutrient;
     const profit = value - cost;
     return {
       entries,
       ings,
       count: entries.reduce((a, e) => a + e.tot.n, 0),
       cost,
+      nutrient,
+      charges,
+      bottles,
+      leftover: opt.nutrient ? bottles * opt.nutrient.charges - charges : 0,
       raw,
-      saver: raw - cost,
+      saver: raw - ingCost,
       value,
       profit,
       energy,
@@ -285,7 +398,7 @@ export function createEngine(data: LoftiaData) {
     };
   }
 
-  function computeCrop(slug: string, opt: Pick<CalcOptions, 'farmLvl' | 'drip'>): ComputedCrop {
+  function computeCrop(slug: string, opt: WaterOptions): ComputedCrop {
     const c = cropMap.get(slug);
     if (!c) throw new Error(`Culture inconnue : ${slug}`);
     const dbl = perkSum(data.perks.farming.double, opt.farmLvl);
@@ -317,6 +430,7 @@ export function createEngine(data: LoftiaData) {
     growTime,
     waterTime,
     cropWater,
+    hydroCharges,
     computeRecipe,
     computePlan,
     computeCrop,

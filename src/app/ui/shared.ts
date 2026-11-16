@@ -1,6 +1,7 @@
-/* Petits éléments partagés : pipes, icônes, liens externes, contrôles de quantité et de parcelles. */
-import { ChangeDetectionStrategy, Component, Directive, HostListener, Pipe, PipeTransform, inject, input } from '@angular/core';
+/* Petits éléments partagés : pipes, icônes, liens externes, contrôles de quantité et du jardin. */
+import { ChangeDetectionStrategy, Component, Directive, HostListener, Pipe, PipeTransform, computed, inject, input } from '@angular/core';
 import { fmtTime, n0, n1 } from '../core/format';
+import { countRange, type GardenCountKey } from '../core/garden';
 import { PlannerStore } from '../state/planner.store';
 
 export const CODEX_ITEMS = 'https://loftiacodex.com/items/';
@@ -145,32 +146,61 @@ export class QtyControl {
   readonly sm = input(false);
 }
 
-/** Parcelles illimitées / limitées + nombre */
+/** Jardin : − n + pour les garden beds, les Drip Irrigators et les Hydrofarms ; ce sont les parcelles */
 @Component({
-  selector: 'app-plots',
+  selector: 'app-garden',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icon],
-  host: { class: 'plots-ctl' },
+  imports: [Icon, AssetPipe],
+  host: { class: 'garden-ctl' },
   template: `
-    <span class="seg">
-      <button type="button" [attr.aria-pressed]="!s().plotsLimited" (click)="store.patch({ plotsLimited: false })">Illimitées</button>
-      <button type="button" [attr.aria-pressed]="s().plotsLimited" (click)="store.patch({ plotsLimited: true })">Limitées</button>
-    </span>
-    @if (s().plotsLimited) {
-      <span class="qty-ctl sm">
-        <button type="button" (click)="store.setPlots(s().plots - 1)" aria-label="Une parcelle de moins"><app-icon name="minus" /></button>
-        <input
-          type="number" min="1" max="999" inputmode="numeric" aria-label="Nombre de parcelles"
-          [value]="s().plots"
-          (change)="store.setPlots($any($event.target).value)"
-          (keydown.enter)="$any($event.target).blur()"
-        />
-        <button type="button" (click)="store.setPlots(s().plots + 1)" aria-label="Une parcelle de plus"><app-icon name="plus" /></button>
+    @for (t of tiles(); track t.key) {
+      <span class="gctl" [title]="t.title">
+        <img [src]="t.icon | asset" [alt]="t.name" />
+        <span class="stepper">
+          <button type="button" class="step" [disabled]="t.n <= t.min" (click)="store.stepGarden(t.key, -1)" [attr.aria-label]="'Un de moins : ' + t.name">
+            <app-icon name="minus" />
+          </button>
+          <output class="lv" [attr.aria-label]="t.name">{{ t.n }}</output>
+          <button type="button" class="step" [disabled]="t.n >= t.max" (click)="store.stepGarden(t.key, 1)" [attr.aria-label]="'Un de plus : ' + t.name">
+            <app-icon name="plus" />
+          </button>
+        </span>
       </span>
     }
+    <span class="gsum" title="Une graine par parcelle">= {{ store.plots() }} parcelles</span>
   `,
 })
-export class PlotsControl {
+export class GardenControl {
   protected readonly store = inject(PlannerStore);
-  protected readonly s = this.store.state;
+
+  protected readonly tiles = computed(() => {
+    const counts = this.store.state().garden;
+    const garden = this.store.gardenData;
+    const [bed, hydro] = (['bed', 'hydrofarm'] as const).map((k) => garden.plots.find((p) => p.key === k)!);
+    const tile = (key: GardenCountKey, name: string, icon: string, title: string) => ({
+      key,
+      name,
+      icon,
+      title,
+      n: counts[key],
+      ...countRange(key, counts, garden),
+    });
+    return [
+      tile('bed', bed.name, bed.icon, `${bed.name} : ${bed.per} parcelles chacun, à arroser (max ${bed.max})`),
+      tile(
+        'irrigator',
+        'Drip Irrigators',
+        'drip-irrigator',
+        counts.bed
+          ? `Drip Irrigators posés sur tes lits : l'arrosage y tient 1,5 fois sa durée de base, à la place de Deep Hydration (max ${counts.bed}, un par lit)`
+          : 'Drip Irrigators : ajoute d’abord un lit',
+      ),
+      tile(
+        'hydrofarm',
+        hydro.name,
+        hydro.icon,
+        `${hydro.name} : ${hydro.per} parcelles chacune, arrosées par la Nutrient Solution ; Rapid Growth ne s'y applique pas (max ${hydro.max})`,
+      ),
+    ];
+  });
 }

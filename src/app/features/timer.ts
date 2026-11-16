@@ -14,6 +14,7 @@ import {
   fmtClock,
   fmtCountdown,
   nextLabel,
+  stepKey,
   stepVerb,
 } from '../core/timer-plan';
 import { TimerAlert, TimerStore } from '../state/timer.store';
@@ -31,10 +32,10 @@ const LATER_MAX = 4;
   imports: [AssetPipe],
   host: { class: 'tsteps' },
   template: `
-    @for (s of steps(); track s.kind + s.slug) {
+    @for (s of steps(); track key(s)) {
       <span class="tstep" [class]="s.kind">
         <img [src]="s.slug | asset" alt="" />{{ bare() ? '' : verb(s) + ' '
-        }}<b>{{ s.name }}</b> ×{{ s.qty }}
+        }}<b>{{ s.name }}</b> ×{{ s.qty }}@if (s.hydro) {<small>en Hydrofarm</small>}
       </span>
     }
   `,
@@ -44,6 +45,7 @@ export class TimerSteps {
   /** Sans verbe (« Rice ×3 »), quand le libellé est déjà à côté */
   readonly bare = input(false);
   protected readonly verb = stepVerb;
+  protected readonly key = stepKey;
 }
 
 /** Section « Minuteur » de Mon plan : lancer, suivre, arrêter */

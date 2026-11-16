@@ -28,7 +28,12 @@ import { TYPE_LABEL } from './recipe-card';
               <td><a class="cell" appExternal [href]="codex + r.seed"><span class="ci"><img [src]="r.seed | asset" alt="" loading="lazy" /></span>{{ r.seedName }}</a></td>
               <td><a class="cell" appExternal [href]="codex + r.slug"><span class="ci"><img [src]="r.slug | asset" alt="" loading="lazy" /></span>{{ r.name }}</a></td>
               <td class="num" [class.hot]="st.cropSort === 'grow'">{{ r.grow | time }}</td>
-              <td class="num" [class.hot]="st.cropSort === 'water'">{{ r.water | time }}</td>
+              <td class="num" [class.hot]="st.cropSort === 'water'">
+                {{ r.water | time }}
+                @if (r.dripWater !== null) {
+                  <small class="sub" title="Dans un lit équipé d'un Drip Irrigator">{{ r.dripWater | time }} avec Drip</small>
+                }
+              </td>
               <td class="num" [class.hot]="st.cropSort === 'cost'">{{ r.cost === null ? '—' : r.cost }}</td>
               <td class="num" [class.hot]="st.cropSort === 'value'">{{ r.value }}</td>
               <td class="num strong" [class.hot]="st.cropSort === 'profit'">{{ r.profit === null ? '—' : r.profit }}</td>
@@ -96,9 +101,17 @@ export class CropsView {
   }
 
   protected readonly rows = computed(() => {
-    const { farmLvl, drip, cropSort: k, cropDir: d } = this.store.state();
+    const { farmLvl, garden, cropSort: k, cropDir: d } = this.store.state();
+    const { engine } = this.store;
     const q = this.store.q().trim().toLowerCase();
-    let rows = this.store.data.crops.map((c) => this.store.engine.computeCrop(c.slug, { farmLvl, drip }));
+    // Tous les lits équipés : l'arrosage avec Drip ; une partie seulement : les deux valeurs
+    const drip = garden.bed > 0 && garden.irrigator >= garden.bed;
+    const mixed = garden.irrigator > 0 && !drip;
+    let rows = this.store.data.crops.map((c) => {
+      const r = engine.computeCrop(c.slug, { farmLvl, drip });
+      const dw = mixed ? engine.cropWater(c.slug, { farmLvl, drip: true }) : null;
+      return { ...r, dripWater: dw !== null && dw !== r.water ? dw : null };
+    });
     if (q) rows = rows.filter((r) => r.name.toLowerCase().includes(q) || r.seedName.toLowerCase().includes(q));
     const val = (r: ComputedCrop) => (k === 'uses' ? this.usedIn(r.slug).length : r[k]);
     return rows.sort((a, b) => {

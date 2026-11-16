@@ -127,8 +127,8 @@ export class TimerStore {
   /** Calendrier du plan actuel si on le lançait maintenant */
   readonly preview = computed(() => {
     const { engine } = this.planner;
-    const opt = this.planner.opt();
-    return buildSchedule(this.planner.planResult(), this.planner.plots(), (slug) => engine.cropWater(slug, opt));
+    const { farmLvl, plots } = this.planner.opt();
+    return buildSchedule(this.planner.planResult(), plots, (slug, drip) => engine.cropWater(slug, { farmLvl, drip }));
   });
 
   readonly events = computed<DueEvent[]>(() => {

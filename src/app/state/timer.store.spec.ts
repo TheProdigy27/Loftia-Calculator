@@ -84,7 +84,7 @@ describe('TimerStore', () => {
     const { planner, timer } = setup();
     planner.setQty(SOUP, 1);
     expect(timer.preview().events.map((e) => e.at)).toEqual([5, 10, 15, 20, 30]);
-    planner.toggleOpt('drip'); // tomate : arrosage 7 min 30, basilic : 15 min
+    planner.stepGarden('irrigator', 1); // le lit est équipé : tomate 7 min 30, basilic 15 min
     const pv = timer.preview();
     expect(pv.events.map((e) => e.at)).toEqual([7.5, 15, 30]);
     expect(steps(pv.events[1].steps)).toEqual(['harvest tomato×2', 'water basil×1']);

@@ -4,10 +4,11 @@
  *
  * Hypothèses : on plante et on arrose tout ce qui tient dans les parcelles juste avant de lancer le minuteur ;
  * un arrosage tient `water` minutes, il faut donc arroser de nouveau toutes les `water` minutes jusqu'à la récolte.
- * Avec plus de graines que de parcelles, les plantations suivent la même répartition que le temps du plan
- * (engine.ts, makespan) : la plus longue culture d'abord, et on replante dès qu'une parcelle se libère.
+ * Les plantations suivent la même répartition que le temps du plan (engine.ts, placeUnits) : la plus longue
+ * culture d'abord, et on replante dès qu'une parcelle se libère. En Hydrofarm, rien à arroser.
  */
-import type { ComputedPlan } from './types';
+import { placeUnits, slotsOf, type GrowUnit } from './engine';
+import type { ComputedPlan, SlotGroup } from './types';
 
 export type StepKind = 'harvest' | 'plant' | 'water';
 
@@ -19,6 +20,8 @@ export interface TimerStep {
   qty: number;
   /** Fruit d'arbre : pas de parcelle, on le cueille */
   tree?: boolean;
+  /** Plantation dans une Hydrofarm (sinon dans un garden bed) */
+  hydro?: boolean;
 }
 
 export interface TimerEvent {
@@ -35,76 +38,68 @@ export interface TimerSchedule {
   total: number;
 }
 
-interface Unit {
+interface Planted {
   slug: string;
   name: string;
-  grow: number;
+  start: number;
+  end: number;
+  /** Durée d'un arrosage ; 0 = rien à arroser */
   water: number;
-  tree: boolean;
+  qty: number;
+  tree?: boolean;
+  hydro?: boolean;
 }
 
 const KIND_ORDER: Record<StepKind, number> = { harvest: 0, plant: 1, water: 2 };
 
 function byKindThenName(a: TimerStep, b: TimerStep): number {
-  return KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || a.name.localeCompare(b.name);
+  return KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || a.name.localeCompare(b.name) || Number(!!a.hydro) - Number(!!b.hydro);
 }
 
 /**
  * Calendrier du plan.
- * @param plots parcelles (0 = illimitées)
- * @param waterOf durée d'un arrosage (min, à la seconde près) d'une culture, Deep Hydration et Drip Irrigator compris
+ * @param plots parcelles du jardin, ou un nombre de parcelles de garden bed (0 = illimitées)
+ * @param waterOf durée d'un arrosage (min, à la seconde près) d'une culture, Deep Hydration ou Drip Irrigator compris
  */
 export function buildSchedule(
   plan: ComputedPlan,
-  plots: number,
-  waterOf: (slug: string) => number,
+  plots: number | readonly SlotGroup[],
+  waterOf: (slug: string, drip: boolean) => number,
 ): TimerSchedule {
-  const crops: Unit[] = [];
-  const planted: { u: Unit; start: number; qty: number }[] = [];
+  const slots = slotsOf(plots);
+  const crops: (GrowUnit & { name: string })[] = [];
+  const planted: Planted[] = [];
   for (const i of plan.ings) {
     // t = 0 : arbre déjà planté, le fruit est disponible tout de suite
     if ((i.type !== 'crop' && i.type !== 'tree') || i.t <= 0) continue;
-    const u: Unit = {
-      slug: i.slug,
-      name: i.name,
-      grow: i.t,
-      water: waterOf(i.slug),
-      tree: i.type === 'tree',
-    };
-    if (u.tree) planted.push({ u, start: 0, qty: i.qty });
-    else for (let k = 0; k < i.qty; k++) crops.push(u);
+    if (i.type === 'tree')
+      planted.push({ slug: i.slug, name: i.name, start: 0, end: i.t, water: waterOf(i.slug, false), qty: i.qty, tree: true });
+    else for (let k = 0; k < i.qty; k++) crops.push({ slug: i.slug, name: i.name, bed: i.t, hydro: i.grow });
   }
-
-  if (!plots || plots >= crops.length) {
-    for (const u of crops) planted.push({ u, start: 0, qty: 1 });
-  } else {
-    // Même répartition que makespan() : la plus longue d'abord, sur la parcelle la moins chargée
-    const sorted = [...crops].sort((a, b) => b.grow - a.grow || a.slug.localeCompare(b.slug));
-    const loads = new Array<number>(plots).fill(0);
-    for (const u of sorted) {
-      let mi = 0;
-      for (let k = 1; k < loads.length; k++) if (loads[k] < loads[mi]) mi = k;
-      planted.push({ u, start: loads[mi], qty: 1 });
-      loads[mi] += u.grow;
-    }
+  for (const { u, group, start, end } of placeUnits(crops, slots)) {
+    const g: SlotGroup | undefined = slots[group];
+    const water = g?.hydro ? 0 : waterOf(u.slug, !!g?.drip);
+    planted.push({ slug: u.slug, name: u.name, start, end, water, qty: 1, ...(g?.hydro ? { hydro: true } : {}) });
   }
 
   const first = new Map<string, TimerStep>();
   const byTime = new Map<number, Map<string, TimerStep>>();
-  const add = (at: number, kind: StepKind, u: Unit, qty: number) => {
+  const add = (at: number, step: TimerStep) => {
     let steps = byTime.get(at);
     if (!steps) byTime.set(at, (steps = new Map()));
-    addStep(steps, { kind, slug: u.slug, name: u.name, qty, ...(u.tree ? { tree: true } : {}) });
+    addStep(steps, step);
   };
 
   let total = 0;
-  for (const { u, start, qty } of planted) {
-    if (start > 0) add(start, 'plant', u, qty);
-    else if (!u.tree) addStep(first, { kind: 'plant', slug: u.slug, name: u.name, qty });
-    const end = start + u.grow;
+  for (const p of planted) {
+    const { slug, name, start, end, water, qty } = p;
+    const plant: TimerStep = { kind: 'plant', slug, name, qty, ...(p.hydro ? { hydro: true } : {}) };
+    if (start > 0) add(start, plant);
+    else if (!p.tree) addStep(first, plant);
     // k × water plutôt que des additions successives : pas de dérive avec des durées à la seconde (7,5 min)
-    if (u.water > 0) for (let k = 1; start + k * u.water < end; k++) add(start + k * u.water, 'water', u, qty);
-    add(end, 'harvest', u, qty);
+    if (water > 0)
+      for (let k = 1; start + k * water < end; k++) add(start + k * water, { kind: 'water', slug, name, qty });
+    add(end, { kind: 'harvest', slug, name, qty, ...(p.tree ? { tree: true } : {}) });
     total = Math.max(total, end);
   }
 
@@ -114,8 +109,11 @@ export function buildSchedule(
   return { first: [...first.values()].sort(byKindThenName), events, total };
 }
 
+/** Une pastille par action, culture et type de parcelle */
+export const stepKey = (s: TimerStep) => `${s.kind}|${s.slug}${s.hydro ? '|hydro' : ''}`;
+
 function addStep(map: Map<string, TimerStep>, s: TimerStep): void {
-  const key = `${s.kind}|${s.slug}`;
+  const key = stepKey(s);
   const prev = map.get(key);
   if (prev) prev.qty += s.qty;
   else map.set(key, { ...s });
@@ -131,7 +129,7 @@ export function mergeSteps(events: readonly TimerEvent[]): TimerStep[] {
   for (const e of events) {
     // Dans un rappel, les récoltes passent avant les arrosages (byKindThenName)
     for (const s of e.steps) {
-      const key = `${s.kind}|${s.slug}`;
+      const key = stepKey(s);
       const prev = map.get(key);
       if (s.kind === 'harvest') map.delete(`water|${s.slug}`);
       if (s.kind === 'water' || !prev) map.set(key, { ...s });

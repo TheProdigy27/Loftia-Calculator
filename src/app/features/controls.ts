@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import type { Perk } from '../core/types';
 import { PlannerStore, RecipeRow } from '../state/planner.store';
-import { AssetPipe, PlotsControl } from '../ui/shared';
+import { AssetPipe, GardenControl } from '../ui/shared';
 
 const PERK_ICON: Record<string, string> = {
   'cooking.refund': 'T_UI_Perks_Cook_IngredientRefund',
@@ -49,7 +49,7 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
 @Component({
   selector: 'app-controls',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, PlotsControl],
+  imports: [AssetPipe, GardenControl],
   host: { class: 'controls' },
   template: `
     <div class="panel ctlbar">
@@ -73,21 +73,9 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
         </div>
       }
 
-      <div class="ctl" title="Prix utilisé pour le coût des ingrédients">
-        <span class="clabel">Prix</span>
-        <div class="seg">
-          <button type="button" [attr.aria-pressed]="s().mode === 'cash'" (click)="store.patch({ mode: 'cash' })">Ce que ça coûte</button>
-          <button type="button" [attr.aria-pressed]="s().mode === 'regular'" (click)="store.patch({ mode: 'regular' })">Prix de revente</button>
-        </div>
-      </div>
-      <div class="ctl" title="Pour calculer le temps de pousse">
-        <span class="clabel">Parcelles</span>
-        <app-plots />
-      </div>
-      <div class="ctl" title="Drip Irrigator installé sur tes garden beds : l'arrosage tient 1,5 fois sa durée de base (tomate : 7 min 30), Deep Hydration ne s'y ajoute pas (pas sur les arbres)">
-        <button type="button" class="chip" [attr.aria-pressed]="s().drip" (click)="store.toggleOpt('drip')">
-          <span class="box"></span><img [src]="'drip-irrigator' | asset" alt="" />Drip Irrigator
-        </button>
+      <div class="ctl" role="group" aria-label="Mon jardin">
+        <span class="clabel" title="Tes parcelles : elles servent au temps de pousse, au remplissage et au minuteur du plan">Jardin</span>
+        <app-garden />
       </div>
       <div class="ctl" title="Station de cuisine : recettes jusqu'à ce niveau">
         <span class="clabel"><img src="assets/cooking-station.webp" alt="" />Station</span>
@@ -106,18 +94,13 @@ function perkChips(skill: 'cooking' | 'farming', tiers: Record<string, Perk[]>, 
         <span class="tip-tag">Tip</span>
         @if (s().tab === 'cultures') {
           <p><b>Dew / h</b> = (vente − prix de la graine) ÷ temps de pousse, comme sur le Codex. Ton niveau de Farming applique Rapid Growth (pousse plus courte), Fruitful Harvest (valeur moyenne) et Deep Hydration (arrosage plus long).</p>
-          <p><b>Arrosage</b> = combien de temps un arrosage tient{{ s().drip ? ', Drip Irrigator compris (× 1,5 la durée de base, à la place de Deep Hydration ; pas sur les arbres)' : '' }}. Le minuteur du plan s'en sert pour te rappeler d'arroser. Les arbres n'ont pas de prix de graine relevé sur le Codex.</p>
+          <p><b>Arrosage</b> = combien de temps un arrosage tient dans un garden bed{{ dripNote() }}. Le minuteur du plan s'en sert pour te rappeler d'arroser ; dans une Hydrofarm, la Nutrient Solution s'en charge. Les arbres n'ont pas de prix de graine relevé sur le Codex.</p>
           <div class="ex">Clique sur les plats d'une ligne pour voir les recettes qui utilisent cette culture.</div>
         } @else {
-          @if (s().mode === 'cash') {
-            <p><b>Ce que ça coûte</b> : prix des graines + achats en boutique. La cueillette et les fruits d'arbres sont gratuits. Le profit, c'est ce que tu gagnes vraiment en partant de zéro.</p>
-          } @else {
-            <p><b>Prix de revente</b> (comme sur le Codex) : tes cultures et ta cueillette comptent pour ce que tu pourrais les vendre, la boutique pour son prix. Le profit, c'est ce que la cuisine ajoute par rapport à vendre les ingrédients bruts.</p>
-          }
-          @if (!s().plotsLimited) {
-            <p><b>Temps</b> = pousse de l'ingrédient le plus long (<span class="here">cerclé en orange</span>), toutes les graines plantées en même temps.</p>
-          } @else {
-            <p><b>Temps</b> = toutes les graines réparties au mieux sur <b>{{ s().plots }} parcelle{{ s().plots > 1 ? 's' : '' }}</b>. Les arbres ne prennent pas de parcelle. L'ingrédient le plus long est <span class="here">cerclé en orange</span>.</p>
+          <p><b>Coût</b> = prix des graines + achats en boutique. La cueillette et les fruits d'arbres sont gratuits. Le profit, c'est ce que tu gagnes vraiment en partant de zéro.</p>
+          <p><b>Temps</b> = toutes les graines réparties au mieux sur les <b>{{ store.plots() }} parcelles</b> de ton jardin (9 par lit 3x3, 15 par Hydrofarm), d'abord dans les lits. Les arbres ne prennent pas de parcelle. L'ingrédient le plus long est <span class="here">cerclé en orange</span>.</p>
+          @if (s().garden.hydrofarm) {
+            <p>En <b>Hydrofarm</b>, Rapid Growth ne s'applique pas et il n'y a rien à arroser, mais chaque graine boit de la <b>Nutrient Solution</b> : une charge par arrosage qu'elle aurait demandé (Deep Hydration compris). Le flacon coûte {{ store.gardenData.nutrient.cost }} Dew pour {{ store.gardenData.nutrient.charges }} charges : une recette compte {{ nutrientPerCharge() }} Dew la charge (<img class="nsol" src="assets/nutrient-solution.webp" alt="" /> à côté du coût), le plan compte les flacons entiers à acheter.</p>
           }
           <p>Ajoute des recettes à <b>ton plan</b> avec le bouton + : la carte passe en totaux et le plan additionne les ingrédients.</p>
           @if (example(); as ex) {
@@ -143,13 +126,28 @@ export class Controls {
     ];
   });
 
+  /** Arrosage des cultures avec les Drip Irrigators du jardin */
+  protected readonly dripNote = computed(() => {
+    const { bed, irrigator } = this.s().garden;
+    if (!irrigator) return '';
+    const what = 'Drip Irrigator compris (× 1,5 la durée de base, à la place de Deep Hydration ; pas sur les arbres)';
+    return irrigator >= bed ? `, ${what}` : ` ; la 2e valeur est celle des lits avec ${what}`;
+  });
+
+  protected readonly nutrientPerCharge = computed(() => {
+    const { cost, charges } = this.store.gardenData.nutrient;
+    return cost / charges;
+  });
+
   /** Détail du coût de la première recette affichée */
   protected readonly example = computed(() => {
     const top: RecipeRow | undefined = this.store.recipes()[0];
     if (!top) return null;
     return {
       name: top.name,
-      parts: top.ings.map((i) => `${i.name} ${i.q > 1 ? i.q + '×' : ''}${i.unit}`).join(' + '),
+      parts:
+        top.ings.map((i) => `${i.name} ${i.q > 1 ? i.q + '×' : ''}${i.unit}`).join(' + ') +
+        (top.nutrient ? ` + Nutrient Solution ${top.nutrient}` : ''),
       cost: top.cost,
       approx: top.approx,
     };

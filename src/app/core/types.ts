@@ -66,16 +66,37 @@ export interface LoftiaData {
   recipes: Recipe[];
 }
 
-export type PriceMode = 'cash' | 'regular';
+/** Parcelles d'un même type (une graine par parcelle) */
+export interface SlotGroup {
+  n: number;
+  /** Hydrofarm : arrosée par la Nutrient Solution (rien à arroser), Rapid Growth ne s'y applique pas */
+  hydro?: boolean;
+  /** Garden bed équipé d'un Drip Irrigator : l'arrosage tient 1,5 fois sa durée de base */
+  drip?: boolean;
+}
+
+/** Nutrient Solution : ce qui arrose les Hydrofarms (un flacon = `charges` arrosages) */
+export interface NutrientSolution {
+  /** Prix d'un flacon (Dew) */
+  cost: number;
+  /** Charges par flacon : une charge par arrosage d'une plante */
+  charges: number;
+}
 
 export interface CalcOptions {
   cookLvl: number;
   farmLvl: number;
-  mode: PriceMode;
-  /** Nombre de parcelles ; 0 = illimitées */
-  plots: number;
+  /** Parcelles du jardin, ou un nombre de parcelles de garden bed (0 = illimitées) */
+  plots: number | readonly SlotGroup[];
   treesReady: boolean;
-  /** Drip Irrigator installé sur les garden beds (absent = non) */
+  /** Prix de la Nutrient Solution consommée en Hydrofarm (absent = non comptée) */
+  nutrient?: NutrientSolution;
+}
+
+/** Réglages qui jouent sur l'arrosage d'une culture */
+export interface WaterOptions {
+  farmLvl: number;
+  /** Planté dans un garden bed équipé d'un Drip Irrigator */
   drip?: boolean;
 }
 
@@ -98,7 +119,7 @@ export interface Ingredient {
 
 export interface ComputedIngredient extends Ingredient {
   q: number;
-  /** Prix unitaire retenu selon le mode */
+  /** Prix unitaire retenu : ce que ça coûte (valeur de revente si inconnu) */
   unit: number;
   /** Temps de pousse effectif (min) */
   t: number;
@@ -117,7 +138,10 @@ export interface ComputedRecipe {
   recipePrice: number | null;
   ings: ComputedIngredient[];
   value: number;
+  /** Ingrédients (Ingredient Saver inclus) + Nutrient Solution */
   cost: number;
+  /** Nutrient Solution des graines plantées en Hydrofarm, au prix de la charge (Dew), comprise dans `cost` */
+  nutrient: number;
   profit: number;
   approx: boolean;
   time: number;
@@ -135,6 +159,8 @@ export interface ComputedRecipe {
 export interface RecipeTotals {
   n: number;
   cost: number;
+  /** Nutrient Solution pour les n plats, au prix de la charge (Dew), comprise dans `cost` */
+  nutrient: number;
   value: number;
   profit: number;
   energy: number;
@@ -154,8 +180,16 @@ export interface ComputedPlan {
   ings: PlanIngredient[];
   /** Nombre total de plats */
   count: number;
-  /** Coût moyen (Ingredient Saver inclus) */
+  /** Coût moyen (Ingredient Saver et Nutrient Solution inclus) */
   cost: number;
+  /** Nutrient Solution à acheter en flacons entiers (bottles × prix du flacon, Dew), comprise dans `cost` */
+  nutrient: number;
+  /** Charges de Nutrient Solution (une par arrosage d'une plante en Hydrofarm) */
+  charges: number;
+  /** Flacons de Nutrient Solution à acheter pour ces charges (arrondi au-dessus) */
+  bottles: number;
+  /** Charges qui resteront dans le dernier flacon */
+  leftover: number;
   /** Coût brut des ingrédients */
   raw: number;
   /** Économie moyenne d'Ingredient Saver */

@@ -11,7 +11,8 @@ Le cadrage complet est dans [Loftia Planner — Plan d'application.md](Loftia%20
 | Recettes et tris (rentables, rapides, Dew/h, Dew par énergie), filtres, recherche, cartes ou tableau | fait |
 | Plan de cuisine × n : quantités, liste de courses groupée, coût, profit, temps, énergie, copie de la liste | fait, panneau fixe à droite sur grand écran |
 | Cultures : graines, Dew/h, recettes liées | fait |
-| Réglages joueur : niveaux, parcelles, prix, station, Drip Irrigator (arrosage × 1,5), sauvegarde locale | fait (`localStorage` de la WebView) |
+| Réglages joueur : niveaux, prix, station, sauvegarde locale | fait (`localStorage` de la WebView) |
+| Jardin à la place du nombre de parcelles : garden beds 3x3 (9 parcelles, max 6), Drip Irrigators (arrosage × 1,5, un par lit), Hydrofarms (15 parcelles, max 5, sans arrosage ni Rapid Growth, mais chaque graine y boit de la Nutrient Solution : une charge par arrosage, 100 Dew le flacon de 25 ; les recettes la comptent à la charge, le plan en flacons entiers à acheter) ; il sert au temps, au coût, au remplissage, au minuteur et à l'arrosage des cultures | fait : `src/data/loftia-garden.json` (Garden planner du Codex, relevé le 16 novembre 2026) |
 | Données embarquées | fait : `src/data/loftia-data.json` (instantané du 6 novembre 2026) |
 | Installeur Windows | fait : `npm run dist` produit un `-setup.exe` NSIS de 6,4 Mo (bootstrapper WebView2 inclus) |
 | Mise à jour automatique | fait : vérifie les releases GitHub au démarrage puis toutes les 6 h, bouton ↻ dans la barre du haut, installation et redémarrage en un clic |
@@ -34,7 +35,7 @@ npm test           # moteur, plan et état
 ## Organisation
 
 ```
-src/app/core/        moteur de calcul pur (port TypeScript de engine.js) + texte du plan
+src/app/core/        moteur de calcul pur (port TypeScript de engine.js), jardin (garden.ts) + texte du plan
 src/app/state/       état de l'appli en signals, sauvegarde locale, mises à jour
 src/app/features/    écrans : réglages, recettes, cultures, plan
 src/app/ui/          pipes, icônes, contrôles partagés
@@ -46,11 +47,13 @@ scripts/             conversion des données, génération des résultats de ré
 
 ## Tests
 
-`engine.spec.ts` compare le moteur TypeScript au moteur du prototype sur les 61 recettes : niveaux 1 à 20, deux modes de prix, parcelles illimitées ou limitées, arbres prêts ou non, totaux × n, plus 40 plans aléatoires et le front de Pareto. Les résultats de référence viennent de `reference/prototype/engine.js` :
+`engine.spec.ts` compare le moteur TypeScript au moteur du prototype sur les 61 recettes : niveaux 1 à 20, parcelles illimitées ou limitées, arbres prêts ou non, totaux × n, plus 40 plans aléatoires et le front de Pareto. Les résultats de référence viennent de `reference/prototype/engine.js` :
 
 ```sh
 npm run test:fixture   # régénère src/app/core/engine.fixture.json depuis le prototype
 ```
+
+`garden.spec.ts` vérifie les compteurs du jardin (bornes, Drip Irrigators ≤ lits, jamais vide) et les parcelles qu'ils donnent au moteur ; `engine.spec.ts` vérifie aussi la répartition des graines entre lits, lits irrigués et Hydrofarms, et la Nutrient Solution comptée pour celles qui tombent en Hydrofarm (flacons entiers et charges de reste pour le plan).
 
 Si les données du Codex changent : mettre à jour `reference/prototype/data.js`, puis `npm run data:convert` et `npm run test:fixture`.
 

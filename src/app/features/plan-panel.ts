@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { PLAN_GROUPS, planText, plotsLabel } from '../core/plan-text';
+import { PLAN_GROUPS, planText } from '../core/plan-text';
 import { PlannerStore } from '../state/planner.store';
 import { TimerStore } from '../state/timer.store';
-import { AssetPipe, Dew, Icon, N0Pipe, PlotsControl, QtyControl, TimePipe } from '../ui/shared';
+import { AssetPipe, Dew, Icon, N0Pipe, QtyControl, TimePipe } from '../ui/shared';
 import { TimerCard } from './timer';
 
 /** « Mon plan de cuisine » : panneau fixe à droite sur grand écran, tiroir sinon */
 @Component({
   selector: 'app-plan-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, QtyControl, PlotsControl, TimerCard],
+  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, QtyControl, TimerCard],
   template: `
     <div class="drawer-head">
       <span class="sticker sm"><img src="assets/cooking-station.webp" alt="" /></span>
@@ -40,30 +40,23 @@ import { TimerCard } from './timer';
           <div class="panel plines">
             <div class="pline"><span>Vente totale ({{ P.count }} plat{{ P.count > 1 ? 's' : '' }})</span><b><app-dew />{{ P.value | n0 }}</b></div>
             <div class="pline">
-              <span>Coût des ingrédients <span style="color: var(--muted)">({{ s().mode === 'cash' ? 'ce que ça coûte' : 'prix de revente' }})</span></span>
+              <span>Coût des ingrédients</span>
               <b><app-dew />{{ P.raw | n0 }}{{ P.approx ? '≈' : '' }}</b>
             </div>
             @if (P.saver > 0.5) {
               <div class="pline sub"><span>Ingredient Saver (économie moyenne)</span><b style="color: var(--teal)">−{{ P.saver | n0 }}</b></div>
             }
+            @if (P.nutrient) {
+              <div class="pline" [title]="nutrientTitle()">
+                <span><img class="dew" src="assets/nutrient-solution.webp" alt="" />Coût Nutrient Solution ({{ P.bottles }} flacon{{ P.bottles > 1 ? 's' : '' }})</span>
+                <b><app-dew />{{ P.nutrient | n0 }}</b>
+              </div>
+            }
             <div class="pline big"><span>Profit</span><b><app-dew />{{ P.profit | n0 }}</b></div>
             <div class="pline sub">
-              <span>À dépenser : graines {{ P.seedCost | n0 }}{{ P.shopCost ? ' + boutique ' + (P.shopCost | n0) : '' }}</span>
-              <b><app-dew />{{ P.seedCost + P.shopCost | n0 }}</b>
+              <span>À dépenser : graines {{ P.seedCost | n0 }}{{ P.shopCost ? ' + boutique ' + (P.shopCost | n0) : '' }}{{ P.nutrient ? ' + Nutrient Solution ' + (P.nutrient | n0) : '' }}</span>
+              <b><app-dew />{{ P.seedCost + P.shopCost + P.nutrient | n0 }}</b>
             </div>
-          </div>
-        </section>
-
-        <section class="psec">
-          <h3>Parcelles<small>{{ P.seeds }} graine{{ P.seeds > 1 ? 's' : '' }} à planter{{ store.plots() ? ' · ' + P.seeds + ' / ' + store.plots() + ' parcelles' : '' }}</small></h3>
-          @if (store.plots() && P.seeds > store.plots()) {
-            <p class="pnote" style="margin: 0 0 6px">Plus de graines que de parcelles : il faudra plusieurs plantations (déjà compté dans le temps).</p>
-          } @else if (store.plots() && P.seeds < store.plots()) {
-            <p class="pnote" style="margin: 0 0 6px">{{ store.plots() - P.seeds }} parcelle{{ store.plots() - P.seeds > 1 ? 's' : '' }} libre{{ store.plots() - P.seeds > 1 ? 's' : '' }} : le bouton <b>Remplir mes parcelles</b> d'une recette les occupe au maximum.</p>
-          }
-          <div class="panel prow2" style="justify-content: space-between; flex-wrap: wrap">
-            <span class="pnote">Temps calculé avec {{ plotsText() }}{{ treeNote() }}</span>
-            <app-plots />
           </div>
         </section>
 
@@ -112,6 +105,18 @@ import { TimerCard } from './timer';
                   }
                 </div>
               }
+              @if (g.type === 'crop' && P.bottles) {
+                @let ns = store.gardenData.nutrient;
+                <div class="prow2" [title]="nutrientTitle()">
+                  <img class="di ing" src="assets/nutrient-solution.webp" alt="" />
+                  <span class="nm">
+                    <b>{{ ns.name }}</b>
+                    <small>{{ P.charges }} charge{{ P.charges > 1 ? 's' : '' }} en Hydrofarm · flacon de {{ ns.charges }} · {{ ns.cost }} Dew</small>
+                  </span>
+                  <span class="q">×{{ P.bottles }}</span>
+                  <span class="c"><app-dew />{{ P.nutrient | n0 }}</span>
+                </div>
+              }
             </div>
           </section>
         }
@@ -136,28 +141,32 @@ export class PlanPanel {
 
   protected readonly copyLabel = signal('Copier la liste');
 
-  protected readonly plotsText = computed(() => plotsLabel(this.store.plots()));
-  protected readonly treeNote = computed(() =>
-    this.plan().ings.some((i) => i.type === 'tree')
-      ? this.s().treesReady
-        ? ', arbres déjà plantés'
-        : ', arbres comptés 1 cycle'
-      : '',
-  );
-
   protected readonly groups = computed(() => {
     const P = this.plan();
     return PLAN_GROUPS.map((g) => {
       const list = P.ings.filter((i) => i.type === g.type);
       const qty = list.reduce((a, i) => a + i.qty, 0);
+      const dew = (v: number) => `${Math.round(v).toLocaleString('fr-FR')} Dew`;
+      // Graines : leur coût + la Nutrient Solution des Hydrofarms (sa ligne est à la fin de la liste)
       const right =
         g.type === 'crop'
-          ? `${qty} graine${qty > 1 ? 's' : ''} · ${Math.round(P.seedCost).toLocaleString('fr-FR')} Dew`
+          ? `${qty} graine${qty > 1 ? 's' : ''} · ${dew(P.seedCost + P.nutrient)}`
           : g.type === 'shop'
-            ? `${qty} article${qty > 1 ? 's' : ''} · ${Math.round(P.shopCost).toLocaleString('fr-FR')} Dew`
+            ? `${qty} article${qty > 1 ? 's' : ''} · ${dew(P.shopCost)}`
             : `${qty} au total`;
       return { ...g, list, right };
     }).filter((g) => g.list.length);
+  });
+
+  /** Comment la Nutrient Solution est comptée : charges par arrosage, payées en flacons entiers */
+  protected readonly nutrientTitle = computed(() => {
+    const { cost, charges } = this.store.gardenData.nutrient;
+    const P = this.plan();
+    const left = P.leftover ? `, ${P.leftover} de reste` : '';
+    return (
+      `Les graines en Hydrofarm boivent une charge par arrosage (pousse ÷ durée d'un arrosage, arrondi au-dessus) : ` +
+      `${P.charges} charges → ${P.bottles} flacon${P.bottles > 1 ? 's' : ''} de ${charges} à ${cost} Dew${left}.`
+    );
   });
 
   protected growTime(base: number): number {

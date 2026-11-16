@@ -5,14 +5,7 @@ import { PlannerStore, PlotFill } from '../state/planner.store';
 const plural = (n: number, w: string) => `${n} ${w}${n > 1 ? 's' : ''}`;
 
 /** Infobulle du bouton « Remplir mes parcelles » */
-export function fillTitle(
-  f: PlotFill,
-  r: Pick<ComputedRecipe, 'ings'>,
-  current: number,
-  defaultPlots: number,
-): string {
-  if (!f.plots)
-    return `Remplir mes parcelles : passe en parcelles limitées (${defaultPlots}) et met le maximum de plats qui y tient. Un plat prend ${plural(f.per, 'parcelle')}.`;
+export function fillTitle(f: PlotFill, r: Pick<ComputedRecipe, 'ings'>, current: number): string {
   const taken = f.others
     ? ` (${f.others} déjà prise${f.others > 1 ? 's' : ''} par le reste du plan)`
     : '';
@@ -41,7 +34,7 @@ export function fillTitle(
         class="fillbtn"
         [class.sm]="compact()"
         [class.done]="done()"
-        [attr.aria-disabled]="f.plots > 0 && f.n < 1"
+        [attr.aria-disabled]="f.n < 1"
         [title]="title()"
         [attr.aria-label]="title()"
         (click)="onClick()"
@@ -69,11 +62,10 @@ export class FillButton {
   });
   protected readonly title = computed(() => {
     const f = this.fill();
-    return f ? fillTitle(f, this.r(), this.current(), this.store.state().plots) : '';
+    return f ? fillTitle(f, this.r(), this.current()) : '';
   });
 
   protected onClick(): void {
-    if (!this.store.state().plotsLimited) this.store.patch({ plotsLimited: true });
     this.store.fillPlots(this.r().slug);
   }
 }

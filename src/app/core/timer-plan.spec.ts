@@ -4,14 +4,12 @@ import { alertTitle, buildSchedule, fmtCountdown, mergeSteps, nextLabel } from '
 import type { CalcOptions, LoftiaData, PlanQuantities } from './types';
 
 const engine = createEngine(rawData as LoftiaData);
-const BASE: CalcOptions = { cookLvl: 1, farmLvl: 1, mode: 'cash', plots: 0, treesReady: false };
+const BASE: CalcOptions = { cookLvl: 1, farmLvl: 1, plots: 0, treesReady: false };
 
 function schedule(plan: PlanQuantities, opt: Partial<CalcOptions> = {}) {
   const o = { ...BASE, ...opt };
   const P = engine.computePlan(plan, o);
-  const S = buildSchedule(P, o.plots, (slug) =>
-    engine.waterTime(engine.cropMap.get(slug)!.water, o.farmLvl),
-  );
+  const S = buildSchedule(P, o.plots, (slug, drip) => engine.cropWater(slug, { farmLvl: o.farmLvl, drip }));
   return { P, S };
 }
 
@@ -38,6 +36,15 @@ describe('buildSchedule', () => {
     const { S } = schedule({ 'tomato-basil-soup': 1 }, { farmLvl: 15 });
     const waters = S.events.filter((e) => e.steps.some((s) => s.kind === 'water')).map((e) => e.at);
     expect(waters).toEqual([7, 14, 28]); // pousse : tomate 14 min, basilic 29 min (Rapid Growth I)
+  });
+
+  it('Drip Irrigator : 3 rappels sur 30 min pour la soupe tomate-basilic (au lieu de 5)', () => {
+    // 1 lit irrigué + 1 Hydrofarm : tout va dans le lit ; arrosage × 1,5 → tomate 7 min 30, basilic 15 min
+    const garden = [{ n: 9, drip: true }, { n: 15, hydro: true }];
+    for (const farmLvl of [1, 5]) {
+      const { S } = schedule({ 'tomato-basil-soup': 1 }, { farmLvl, plots: garden });
+      expect(compact(S)).toEqual(['7.5 water tomato×2', '15 harvest tomato×2, water basil×1', '30 harvest basil×1']);
+    }
   });
 
   it('plus de graines que de parcelles : replante dès qu’une parcelle se libère, même temps que le plan', () => {
@@ -71,6 +78,31 @@ describe('buildSchedule', () => {
       expect(S.total).toBe(P.time);
       expect(S.events.at(-1)!.at).toBe(P.time);
     }
+  });
+
+  it('Hydrofarm : rien à arroser, on plante « en Hydrofarm »', () => {
+    const { P, S } = schedule({ 'tomato-basil-soup': 1 }, { plots: [{ n: 15, hydro: true }] });
+    expect(compact(S)).toEqual(['15 harvest tomato×2', '30 harvest basil×1']);
+    expect(S.first).toEqual([
+      { kind: 'plant', slug: 'basil', name: 'Basil', qty: 1, hydro: true },
+      { kind: 'plant', slug: 'tomato', name: 'Tomato', qty: 2, hydro: true },
+    ]);
+    expect(S.total).toBe(P.time);
+  });
+
+  it('jardin mélangé : arrosage selon la parcelle (lit, lit avec Drip, Hydrofarm)', () => {
+    // Basilic (le plus long) dans le lit irrigué : arrosage 15 min ; tomates dans les lits sans Drip : 5 min
+    const drip = schedule({ 'tomato-basil-soup': 1 }, { plots: [{ n: 1, drip: true }, { n: 2 }] }).S;
+    expect(compact(drip)).toEqual([
+      '5 water tomato×2',
+      '10 water tomato×2',
+      '15 harvest tomato×2, water basil×1',
+      '30 harvest basil×1',
+    ]);
+    // Un seul lit : le basilic y va, les tomates en Hydrofarm
+    const mixed = schedule({ 'tomato-basil-soup': 1 }, { plots: [{ n: 1 }, { n: 15, hydro: true }] }).S;
+    expect(compact(mixed)).toEqual(['10 water basil×1', '15 harvest tomato×2', '20 water basil×1', '30 harvest basil×1']);
+    expect(mixed.first.map((s) => `${s.slug}×${s.qty}${s.hydro ? ' hydro' : ''}`)).toEqual(['basil×1', 'tomato×2 hydro']);
   });
 
   it('arbres : on cueille au bout d’un cycle, rien s’ils sont déjà plantés', () => {

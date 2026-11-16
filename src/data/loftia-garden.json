@@ -1,0 +1,9 @@
+{
+  "source": "loftiacodex.com/economy/garden",
+  "extracted": "2026-11-16",
+  "plots": [
+    { "key": "bed", "name": "Garden beds (3x3)", "icon": "3x3-garden-bed", "per": 9, "start": 1, "max": 6 },
+    { "key": "hydrofarm", "name": "Hydrofarms", "icon": "hydrofarm", "per": 15, "start": 1, "max": 5 }
+  ],
+  "nutrient": { "name": "Nutrient Solution", "icon": "nutrient-solution", "cost": 100, "charges": 25 }
+}

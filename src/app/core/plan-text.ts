@@ -3,7 +3,7 @@ import type { ComputedPlan, IngredientType } from './types';
 
 /** Groupes de la liste de courses, dans l'ordre d'affichage */
 export const PLAN_GROUPS: { type: IngredientType; title: string; icon: string }[] = [
-  { type: 'crop', title: 'À planter', icon: 'T_UI_Attribute_Icons_Farm' },
+  { type: 'crop', title: 'À acheter', icon: 'T_UI_Attribute_Icons_Farm' },
   { type: 'tree', title: "Fruits d'arbres", icon: 'coconut-tree-sapling' },
   { type: 'gather', title: 'À cueillir', icon: 'wild-berries' },
   { type: 'shop', title: 'À acheter chez Kun', icon: 'egg' },
@@ -34,11 +34,18 @@ export function planText(P: ComputedPlan, plots: number): string {
               : '';
       L.push(`  - ${i.name} ×${i.qty}${extra}`);
     }
+    // Flacons de Nutrient Solution pour les graines en Hydrofarm, avec les graines
+    if (g.type === 'crop' && P.bottles) {
+      const left = P.leftover ? `, ${P.leftover} charge${P.leftover > 1 ? 's' : ''} de reste` : '';
+      L.push(
+        `  - Nutrient Solution ×${P.bottles} (${n0(P.nutrient)} Dew, ${P.charges} charge${P.charges > 1 ? 's' : ''} en Hydrofarm${left})`,
+      );
+    }
   }
   L.push('');
   L.push(`Vente ${n0(P.value)} · Coût ${n0(P.cost)} · Profit ${n0(P.profit)} Dew`);
   L.push(
-    `Temps ${P.time ? fmtTime(P.time) : '—'} (${plotsLabel(plots)}) · Énergie ${P.energy} · À dépenser ${n0(P.seedCost + P.shopCost)} Dew`,
+    `Temps ${P.time ? fmtTime(P.time) : '—'} (${plotsLabel(plots)}) · Énergie ${P.energy} · À dépenser ${n0(P.seedCost + P.shopCost + P.nutrient)} Dew`,
   );
   return L.join('\n');
 }
