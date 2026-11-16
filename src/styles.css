@@ -17,7 +17,7 @@ html{background:var(--bg)}
 body{
   margin:0; font-family:var(--font-body); color:var(--text); font-size:15px; line-height:1.45;
   background:radial-gradient(120% 700px at 50% 0%, rgba(255,255,255,.4), rgba(0,0,0,0) 70%), url("/assets/bg-texture.webp") var(--bg);
-  background-size:auto, 512px 512px; min-height:100vh;
+  background-size:auto, 512px 512px;
 }
 img{user-select:none; -webkit-user-drag:none}
 button{font:inherit; color:inherit; cursor:pointer}
@@ -27,7 +27,7 @@ a{color:var(--teal)}
 .clock{width:13px; height:13px; vertical-align:-2px; margin-right:3px}
 
 /* ---------- Top bar ---------- */
-.topbar{position:sticky; top:0; z-index:30; height:63px; display:flex; align-items:center; gap:20px; padding:0 26px;
+.topbar{position:relative; flex:none; z-index:30; height:63px; display:flex; align-items:center; gap:20px; padding:0 26px;
   background:rgba(255,253,246,.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--border)}
 .brand{display:flex; align-items:center; gap:9px; text-decoration:none; font-family:var(--font-display); font-weight:600; font-size:20px; color:var(--ink); white-space:nowrap}
 .brand img{width:26px; height:26px}
@@ -186,7 +186,7 @@ details.ingpick[open] > summary .caret{transform:rotate(90deg)}
 .m .v.na{color:#9aa79f; font-weight:700; font-size:13px}
 
 /* ---------- Tables ---------- */
-.tablewrap{overflow-x:auto; border-radius:var(--radius-lg)}
+.tablewrap{overflow-x:auto; border-radius:var(--radius-lg); container-type:inline-size}
 table{width:100%; border-collapse:separate; border-spacing:0; font-size:14px}
 thead th{background:var(--panel-2); color:var(--ink); font-weight:800; font-size:13px; text-align:left; padding:11px 12px; white-space:nowrap; border-bottom:1px solid var(--border)}
 thead th.num, td.num{text-align:right}
@@ -198,7 +198,36 @@ tbody tr:first-child td{border-top:0}
 tbody tr:hover td{background:#fbf8ec}
 td.strong{font-weight:900; color:var(--ink)}
 td.hot{background:#f3fbf7 !important; font-weight:900; color:var(--teal-deep)}
-.cell{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink); text-decoration:none; white-space:nowrap}
+.th-short{display:none}
+/* Tableau plus large que la place disponible (fenêtre étroite, « Mon plan » ouvert à côté) : version compacte */
+@container (max-width:1000px){
+  .tablewrap th, .tablewrap td{padding-left:7px; padding-right:7px}
+  .tablewrap th:first-child, .tablewrap td:first-child{padding-left:12px}
+  .tablewrap th:last-child, .tablewrap td:last-child{padding-right:12px}
+  .tablewrap .th-long{display:none}
+  .tablewrap .th-short{display:inline}
+  .tablewrap .cell{gap:8px}
+  .tablewrap .cell .ci{width:34px; height:34px; border-radius:10px}
+  .tablewrap .cell .ci img{width:29px; height:29px}
+  .tablewrap .mini-ings{gap:3px}
+  .tablewrap .mini-ing{width:30px; height:30px; border-radius:8px}
+  .tablewrap .mini-ing img{width:25px; height:25px}
+  .tablewrap .plancell{gap:4px}
+  .tablewrap .qty-ctl.sm button{width:22px}
+  .tablewrap .qty-ctl.sm input{width:32px}
+}
+@container (max-width:860px){
+  .tablewrap table{font-size:13.5px}
+  .tablewrap th, .tablewrap td{padding-left:5px; padding-right:5px}
+  .tablewrap th:first-child, .tablewrap td:first-child{padding-left:10px}
+  .tablewrap th:last-child, .tablewrap td:last-child{padding-right:10px}
+  /* Cultures : 3 vignettes de recettes au lieu de 5, le nombre total reste affiché */
+  .tablewrap .dish-stack img:nth-of-type(n+4){display:none}
+}
+.cell{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink); text-decoration:none; line-height:1.25}
+/* Nom du plat et étiquette « compromis » : passent à la ligne quand le tableau manque de place */
+.cell .cn{display:flex; flex-wrap:wrap; align-items:center; gap:3px 8px; min-width:0}
+.cell .tag{white-space:nowrap}
 .cell .ci{width:40px; height:40px; border-radius:11px; background:var(--mint-body); display:grid; place-items:center; flex:none}
 .cell .ci img{width:34px; height:34px}
 .mini-ings{display:flex; gap:4px}
@@ -351,12 +380,31 @@ footer a{color:var(--muted)}
 .rcard:focus-visible{outline:2px solid var(--teal); outline-offset:2px}
 app-plan-panel{display:flex; flex-direction:column; flex:1; min-height:0}
 
-/* Sur grand écran, « Mon plan » reste ouvert à droite des recettes */
-.layout.with-plan{display:grid; grid-template-columns:minmax(0,1fr) 440px; align-items:start}
-/* Pleine largeur de sa colonne (sinon les marges auto de la grille la réduisent à son contenu) */
-.layout.with-plan > .wrap{width:100%}
-.side-plan{position:sticky; top:63px; height:calc(100vh - 63px); display:flex; flex-direction:column;
+/* La fenêtre ne défile pas : la barre du haut reste en place, la page et « Mon plan » défilent chacun de leur côté */
+html, body{height:100%; overflow:hidden}
+app-root{display:flex; flex-direction:column; height:100%}
+.layout{flex:1; min-height:0; display:flex}
+.main-scroll{flex:1; min-width:0; overflow-x:hidden; overflow-y:auto; outline:none}
+/* Sur grand écran, « Mon plan » reste ouvert à droite des recettes (un peu plus étroit sur les écrans moyens) */
+.side-plan{flex:none; width:clamp(360px, 30vw, 440px); display:flex; flex-direction:column;
   border-left:1px solid var(--border); background:url("/assets/bg-texture.webp") var(--bg); background-size:512px 512px}
+
+/* ---------- Barres de défilement superposées (voir ui/overlay-scroll.ts) ---------- */
+/* Autres zones qui défileraient : barre native fine aux couleurs de l'appli */
+*{scrollbar-width:thin; scrollbar-color:rgba(35,122,104,.35) transparent}
+.osb{scrollbar-width:none}
+.osb::-webkit-scrollbar{display:none}
+.osb-track{position:fixed; z-index:20; opacity:0; pointer-events:none; transition:opacity .35s ease .1s}
+.osb-track.on{opacity:1; pointer-events:auto; transition:opacity .12s ease}
+.osb-track.off{visibility:hidden; pointer-events:none}
+.osb-thumb{position:absolute; border-radius:999px; background:rgba(35,122,104,.4); box-shadow:0 0 0 1px rgba(255,253,246,.55)}
+.osb-y .osb-thumb{top:0; right:3px; width:6px; transition:width .15s ease, background-color .15s ease}
+.osb-x .osb-thumb{left:0; bottom:3px; height:6px; transition:height .15s ease, background-color .15s ease}
+.osb-track.near .osb-thumb{background:rgba(35,122,104,.6)}
+.osb-y.near .osb-thumb, .osb-y.drag .osb-thumb{width:9px}
+.osb-x.near .osb-thumb, .osb-x.drag .osb-thumb{height:9px}
+.osb-track.drag .osb-thumb{background:rgba(27,95,81,.8)}
+@media (prefers-reduced-motion:reduce){ .osb-track, .osb-thumb{transition:none !important} }
 
 /* ---------- Mise à jour (bouton ↻ et bandeau) ---------- */
 .updbtn{display:flex; align-items:center; gap:6px; position:relative; border:1px solid var(--border); background:var(--panel); border-radius:999px; padding:6px 11px 6px 8px; color:var(--muted); font-weight:800; font-size:12.5px}

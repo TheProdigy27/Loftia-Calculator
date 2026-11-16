@@ -24,29 +24,31 @@
 <app-update-banner />
 <app-timer-alerts />
 
-<div class="layout" [class.with-plan]="wide()">
-  <main class="wrap">
-    @let p = page();
-    <div class="crumbs"><a appExternal href="https://loftiacodex.com/economy/crops/">Economy</a> › <span>{{ p.crumb }}</span></div>
-    <div class="title-row">
-      <span class="sticker"><img [src]="p.icon | asset" alt="" /></span>
-      <h1>{{ p.title }}</h1>
-    </div>
-    <p class="subtitle">{{ p.subtitle }}</p>
+<div class="layout">
+  <div #main class="main-scroll" appScroll tabindex="-1">
+    <main class="wrap">
+      @let p = page();
+      <div class="crumbs"><a appExternal href="https://loftiacodex.com/economy/crops/">Economy</a> › <span>{{ p.crumb }}</span></div>
+      <div class="title-row">
+        <span class="sticker"><img [src]="p.icon | asset" alt="" /></span>
+        <h1>{{ p.title }}</h1>
+      </div>
+      <p class="subtitle">{{ p.subtitle }}</p>
 
-    <app-controls />
+      <app-controls />
 
-    @if (s().tab === 'recettes') {
-      <app-recipes-view />
-    } @else {
-      <app-crops-view />
-    }
+      @if (s().tab === 'recettes') {
+        <app-recipes-view />
+      } @else {
+        <app-crops-view />
+      }
 
-    <footer>
-      Données et visuels : <a appExternal href="https://loftiacodex.com/economy/cooking/">Loftia Codex</a> (pages Crops, Cooking et fiches
-      objets), relevés le {{ extracted }}. Les prix sont en Dew.
-    </footer>
-  </main>
+      <footer>
+        Données et visuels : <a appExternal href="https://loftiacodex.com/economy/cooking/">Loftia Codex</a> (pages Crops, Cooking et fiches
+        objets), relevés le {{ extracted }}. Les prix sont en Dew.
+      </footer>
+    </main>
+  </div>
 
   @if (wide()) {
     <aside class="side-plan" aria-label="Mon plan de cuisine"><app-plan-panel /></aside>

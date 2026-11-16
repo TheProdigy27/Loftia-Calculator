@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, viewChild } from '@angular/core';
 import { ComputedRecipe } from '../core/types';
 import { BaseSort, IncKey, OptKey, PlannerStore, SORTS, isBaseSort } from '../state/planner.store';
+import { OverlayScroll } from '../ui/overlay-scroll';
 import { AssetPipe, CODEX_ITEMS, Dew, ExternalLink, Icon, N0Pipe, N1Pipe, QtyControl, TimePipe } from '../ui/shared';
 import { FillButton } from './fill-button';
 import { RecipeCard, ingTitle } from './recipe-card';
@@ -14,7 +15,7 @@ interface Highlight {
 @Component({
   selector: 'app-recipes-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, N1Pipe, Dew, Icon, QtyControl, ExternalLink, RecipeCard, FillButton],
+  imports: [AssetPipe, TimePipe, N0Pipe, N1Pipe, Dew, Icon, QtyControl, ExternalLink, RecipeCard, FillButton, OverlayScroll],
   template: `
     @let st = s();
     <div class="sortbar">
@@ -122,15 +123,15 @@ interface Highlight {
         </div>
       } @else if (st.view === 'table') {
         <p class="pnote" style="margin: 0 0 8px">Valeurs pour 1 plat. Les totaux de ton plan sont dans <b>Mon plan</b>.</p>
-        <div class="panel tablewrap">
+        <div class="panel tablewrap" appScroll="x">
           <table>
             <thead>
               <tr>
                 <th class="num">#</th>
                 @for (c of columns; track c.k) {
                   @if (c.k) {
-                    <th [class.num]="c.num" (click)="store.sortByColumn(c.k)" data-k>
-                      {{ c.label }}@if (arrow(c.k); as a) {<span class="arr">{{ a }}</span>}
+                    <th [class.num]="c.num" [attr.title]="c.short ? c.label : null" (click)="store.sortByColumn(c.k)" data-k>
+                      @if (c.short) {<span class="th-long">{{ c.label }}</span><span class="th-short">{{ c.short }}</span>} @else {{{ c.label }}}@if (arrow(c.k); as a) {<span class="arr">{{ a }}</span>}
                     </th>
                   } @else {
                     <th>{{ c.label }}</th>
@@ -146,8 +147,8 @@ interface Highlight {
                   <td class="num" style="color: var(--muted); font-weight: 800">{{ idx + 1 }}</td>
                   <td>
                     <a class="cell" appExternal [href]="codex + r.slug">
-                      <span class="ci"><img [src]="r.slug | asset" alt="" loading="lazy" /></span>{{ r.name }}
-                      @if (r.pareto) { <span class="tag best">compromis</span> }
+                      <span class="ci"><img [src]="r.slug | asset" alt="" loading="lazy" /></span>
+                      <span class="cn"><span>{{ r.name }}</span>@if (r.pareto) {<span class="tag best">compromis</span>}</span>
                     </a>
                   </td>
                   <td>
@@ -208,7 +209,8 @@ export class RecipesView {
     { key: 'planOnly', label: 'Mon plan', icon: 'cooking-station' },
   ];
 
-  protected readonly columns: { label: string; k?: string; num?: boolean }[] = [
+  /** short : libellé affiché quand le tableau est compact (fenêtre étroite) */
+  protected readonly columns: { label: string; short?: string; k?: string; num?: boolean }[] = [
     { label: 'Plat', k: 'name' },
     { label: 'Ingrédients' },
     { label: 'Temps', k: 'time', num: true },
@@ -217,7 +219,7 @@ export class RecipesView {
     { label: 'Profit', k: 'profit', num: true },
     { label: 'Dew/h', k: 'dph', num: true },
     { label: 'Dew/⚡', k: 'dpe', num: true },
-    { label: 'Station', k: 'station', num: true },
+    { label: 'Station', short: 'Lv', k: 'station', num: true },
   ];
 
   protected readonly ingGroups = (() => {

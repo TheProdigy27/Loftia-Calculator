@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { Controls } from './features/controls';
 import { CropsView } from './features/crops-view';
 import { PlanPanel } from './features/plan-panel';
@@ -7,6 +7,7 @@ import { TimerAlerts, TimerChip } from './features/timer';
 import { UpdateBanner, UpdateButton } from './features/updater';
 import { PlannerStore, Tab } from './state/planner.store';
 import { UpdaterStore } from './state/updater.store';
+import { OverlayScroll } from './ui/overlay-scroll';
 import { AssetPipe, Dew, ExternalLink, Icon, N0Pipe, TimePipe } from './ui/shared';
 
 /** Largeur à partir de laquelle « Mon plan » reste ouvert à droite des recettes */
@@ -22,6 +23,7 @@ const WIDE_QUERY = '(min-width: 1180px)';
     Dew,
     Icon,
     ExternalLink,
+    OverlayScroll,
     Controls,
     RecipesView,
     CropsView,
@@ -39,6 +41,8 @@ export class App {
   protected readonly plan = this.store.planResult;
 
   private readonly search = viewChild.required<ElementRef<HTMLInputElement>>('search');
+  /** Zone qui défile sous la barre du haut (la fenêtre elle-même ne défile pas) */
+  private readonly main = viewChild.required<ElementRef<HTMLElement>>('main');
 
   protected readonly wide = signal(false);
   protected readonly drawerOpen = signal(false);
@@ -81,11 +85,13 @@ export class App {
         if (e.matches) this.drawerOpen.set(false);
       });
     }
+    // Les flèches, Page suivante, Espace… font défiler la page dès le lancement, sans cliquer dedans d'abord
+    afterNextRender(() => this.main().nativeElement.focus({ preventScroll: true }));
   }
 
   protected setTab(tab: Tab): void {
     this.store.patch({ tab });
-    window.scrollTo(0, 0);
+    this.main().nativeElement.scrollTo(0, 0);
   }
 
   /** Pastille du minuteur : ouvre « Mon plan » si besoin et fait défiler jusqu'au minuteur */

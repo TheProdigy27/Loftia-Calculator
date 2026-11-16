@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, si
 import { PLAN_GROUPS, planText } from '../core/plan-text';
 import { PlannerStore } from '../state/planner.store';
 import { TimerStore } from '../state/timer.store';
+import { OverlayScroll } from '../ui/overlay-scroll';
 import { AssetPipe, Dew, Icon, N0Pipe, QtyControl, TimePipe } from '../ui/shared';
 import { TimerCard } from './timer';
 
@@ -9,7 +10,7 @@ import { TimerCard } from './timer';
 @Component({
   selector: 'app-plan-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, QtyControl, TimerCard],
+  imports: [AssetPipe, TimePipe, N0Pipe, Dew, Icon, QtyControl, TimerCard, OverlayScroll],
   template: `
     <div class="drawer-head">
       <span class="sticker sm"><img src="assets/cooking-station.webp" alt="" /></span>
@@ -18,7 +19,7 @@ import { TimerCard } from './timer';
         <button type="button" class="xbtn" (click)="closed.emit()" aria-label="Fermer"><app-icon name="x" /></button>
       }
     </div>
-    <div class="drawer-body">
+    <div class="drawer-body" appScroll>
       @let P = plan();
       <!-- Minuteur lancé : en tête, même si le plan a changé ou a été vidé depuis -->
       @if (timer.session()) {

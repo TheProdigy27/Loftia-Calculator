@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import type { ComputedCrop } from '../core/types';
 import { CropSortKey, PlannerStore } from '../state/planner.store';
+import { OverlayScroll } from '../ui/overlay-scroll';
 import { AssetPipe, CODEX_ITEMS, ExternalLink, N0Pipe, TimePipe } from '../ui/shared';
 import { TYPE_LABEL } from './recipe-card';
 
 @Component({
   selector: 'app-crops-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AssetPipe, TimePipe, N0Pipe, ExternalLink],
+  imports: [AssetPipe, TimePipe, N0Pipe, ExternalLink, OverlayScroll],
   template: `
     @let st = store.state();
-    <div class="panel tablewrap">
+    <div class="panel tablewrap" appScroll="x">
       <table>
         <thead>
           <tr>
